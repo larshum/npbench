@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "parir",
+        "full_name": "Parir",
+        "prefix": "parir",
+        "postfix": "parir",
+        "class": "ParirFramework",
+        "arch": "gpu"
+    }
+}
