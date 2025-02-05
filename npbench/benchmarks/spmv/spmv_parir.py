@@ -21,4 +21,4 @@ def spmv(A_row, A_col, A_val, x):
         'j': [ParKind.GpuThreads(64), ParKind.GpuReduction()],
     }
     spmv_helper(A_row, A_col, A_val, N, x, y, parallelize=p)
-    return y.cpu().numpy()
+    return y

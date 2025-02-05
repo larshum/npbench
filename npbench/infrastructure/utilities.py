@@ -158,15 +158,17 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
         val = [val]
     valid = True
     for r, v in zip(ref, val):
+
+        # Copy GPU data to the CPU before comparing
+        import cupy
+        import torch
+        if isinstance(v, torch.Tensor):
+            v = v.cpu().numpy()
+        elif isinstance(v, cupy.ndarray):
+            v = cupy.asnumpy(v)
+
         if not np.allclose(r, v, rtol=rtol, atol=atol):
-            try:
-                import cupy
-                if isinstance(v, cupy.ndarray):
-                    relerror = relative_error(r, cupy.asnumpy(v))
-                else:
-                    relerror = relative_error(r, v)
-            except Exception:
-                relerror = relative_error(r, v)
+            relerror = relative_error(r, v)
             if relerror < norm_error:
                 continue
             valid = False
