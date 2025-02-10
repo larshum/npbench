@@ -10,12 +10,10 @@ def trmm(alpha, A, B, M, N):
                 B[i,j] = B[i,j] + (A[k,i] * B[k,j])
             B[i,j] = B[i,j] * alpha
 
-fn = None
-
 def kernel(alpha, A, B):
-    global fn
     M, N = B.shape
     p = {
         'j': [ParKind.GpuThreads(N)],
+        'k': [ParKind.GpuThreads(256), ParKind.GpuReduction()]
     }
     trmm(alpha, A, B, M, N, parallelize=p)
