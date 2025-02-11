@@ -27,4 +27,4 @@ def kernel(TSTEPS, A, B):
         'j': [ParKind.GpuThreads(64)],
         'k': [ParKind.GpuThreads(64)]
     }
-    parir_kernel(A, B, N, parallelize=p)
+    parir_kernel(A, B, N, TSTEPS, parallelize=p)

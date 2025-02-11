@@ -24,7 +24,7 @@ def parir_kernel(data, radius, res, rmax, npt, N):
             c = c + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0)
         s = 0.0
         for j in range(N):
-            s = s + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0)) * data[j]
+            s = s + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0) * data[j]
         res[i] = s / c
 
 def azimint_naive(data, radius, npt):
@@ -36,5 +36,5 @@ def azimint_naive(data, radius, npt):
         'ix': [ParKind.GpuThreads(1024), ParKind.GpuReduction()],
         'j': [ParKind.GpuThreads(1024), ParKind.GpuReduction()]
     }
-    parir_kernel(data, radius, res, rmax, tmp, npt, N, parallelize=p)
+    parir_kernel(data, radius, res, rmax, npt, N, parallelize=p)
     return res
