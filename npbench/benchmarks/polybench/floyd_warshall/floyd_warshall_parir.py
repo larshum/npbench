@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -12,7 +11,7 @@ def kernel_helper(path, N):
 def kernel(path):
     N, N = path.shape
     p = {
-        'i': [ParKind.GpuThreads(N)],
-        'j': [ParKind.GpuThreads(N)]
+        'i': [parir.threads(N)],
+        'j': [parir.threads(N)]
     }
     kernel_helper(path, N, parallelize=p)

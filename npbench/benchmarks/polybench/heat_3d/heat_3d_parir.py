@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -23,8 +22,8 @@ def parir_kernel(A, B, N, TSTEPS):
 def kernel(TSTEPS, A, B):
     N, N, N = A.shape
     p = {
-        'i': [ParKind.GpuThreads(64)],
-        'j': [ParKind.GpuThreads(64)],
-        'k': [ParKind.GpuThreads(64)]
+        'i': [parir.threads(64)],
+        'j': [parir.threads(64)],
+        'k': [parir.threads(64)]
     }
     parir_kernel(A, B, N, TSTEPS, parallelize=p)

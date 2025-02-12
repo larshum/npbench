@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -13,8 +12,8 @@ def kernel_wrap(alpha, beta, C, A, B, N, M):
 def kernel(alpha, beta, C, A, B):
     N, M = A.shape
     p = {
-        'i': [ParKind.GpuThreads(N)],
-        'k': [ParKind.GpuThreads(256), ParKind.GpuReduction()]
+        'i': [parir.threads(N)],
+        'k': [parir.threads(256), parir.reduce()]
     }
     kernel_wrap(alpha, beta, C, A, B, N, M, parallelize=p)
 

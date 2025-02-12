@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -18,8 +17,8 @@ def kernel(alpha, beta, C, A):
     beta = torch.tensor([beta], dtype=torch.float64, device='cuda')
     N, M = A.shape
     p = {
-        'i': [ParKind.GpuThreads(N)],
-        'k': [ParKind.GpuThreads(256), ParKind.GpuReduction()]
+        'i': [parir.threads(N)],
+        'k': [parir.threads(256), parir.reduce()]
     }
     syrk(alpha, beta, C, A, N, M, parallelize=p)
 

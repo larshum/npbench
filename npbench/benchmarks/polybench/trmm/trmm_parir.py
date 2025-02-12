@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -13,7 +12,7 @@ def trmm(alpha, A, B, M, N):
 def kernel(alpha, A, B):
     M, N = B.shape
     p = {
-        'j': [ParKind.GpuThreads(N)],
-        'k': [ParKind.GpuThreads(256), ParKind.GpuReduction()]
+        'j': [parir.threads(N)],
+        'k': [parir.threads(256), parir.reduce()]
     }
     trmm(alpha, A, B, M, N, parallelize=p)

@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 
@@ -11,7 +10,7 @@ def relu_kernel(x, N, M):
 
 def relu(x):
     N, M = x.shape
-    p = { 'i': [ParKind.GpuThreads(N)], 'j': [ParKind.GpuThreads(M)] }
+    p = { 'i': [parir.threads(N)], 'j': [parir.threads(M)] }
     relu_kernel(x, N, M, parallelize=p)
     return x
 
@@ -33,9 +32,9 @@ def softmax(x):
     N, M = x.shape
     out = torch.empty_like(x)
     p = {
-        'i': [ParKind.GpuThreads(N)],
-        'j': [ParKind.GpuThreads(1024)],
-        'jx': [ParKind.GpuThreads(1024), ParKind.GpuReduction()]
+        'i': [parir.threads(N)],
+        'j': [parir.threads(1024)],
+        'jx': [parir.threads(1024), parir.reduce()]
     }
     softmax_kernel(x, out, N, M, parallelize=p)
     return out

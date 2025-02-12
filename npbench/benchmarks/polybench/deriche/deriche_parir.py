@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -64,8 +63,8 @@ def kernel(alpha, imgIn):
     b[1] = -parir.exp(-2.0 * alpha)
     c[0] = c[1] = 1.0
     p = {
-        'i': [ParKind.GpuThreads(W)],
-        'j': [ParKind.GpuThreads(H)]
+        'i': [parir.threads(W)],
+        'j': [parir.threads(H)]
     }
     parir_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H, parallelize=p)
     return imgOut

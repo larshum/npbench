@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -26,11 +25,11 @@ def softmax(x):
     N, H, SM, SM = x.shape
     out = torch.zeros_like(x)
     p = {
-        'i': [ParKind.GpuThreads(N)],
-        'j': [ParKind.GpuThreads(H)],
-        'k': [ParKind.GpuThreads(SM)],
-        'l': [ParKind.GpuThreads(SM), ParKind.GpuReduction()],
-        'l2': [ParKind.GpuThreads(SM)]
+        'i': [parir.threads(N)],
+        'j': [parir.threads(H)],
+        'k': [parir.threads(SM)],
+        'l': [parir.threads(SM), parir.reduce()],
+        'l2': [parir.threads(SM)]
     }
     softmax_wrap(x, out, N, H, SM, parallelize=p)
     return out

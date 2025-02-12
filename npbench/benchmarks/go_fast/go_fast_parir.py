@@ -1,7 +1,6 @@
 # https://numba.readthedocs.io/en/stable/user/5minguide.html
 
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -17,9 +16,9 @@ def go_fast(a):
     tmp = torch.tensor([0.0], dtype=a.dtype, device=a.device)
     out = torch.empty_like(a)
     p = {
-        'i': [ParKind.GpuThreads(1024), ParKind.GpuReduction()],
-        'ix': [ParKind.GpuThreads(N)],
-        'j': [ParKind.GpuThreads(N)]
+        'i': [parir.threads(1024), parir.reduce()],
+        'ix': [parir.threads(N)],
+        'j': [parir.threads(N)]
     }
     parir_kernel(a, tmp, out, N, parallelize=p)
     return out

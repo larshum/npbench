@@ -1,5 +1,4 @@
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -23,8 +22,8 @@ def kernel_wrap(ex, ey, hz, _fict_, NX, NY, TMAX):
 def kernel(TMAX, ex, ey, hz, _fict_):
     NX, NY = ex.shape
     p = {
-        'i': [ParKind.GpuThreads(NX-1)],
-        'j': [ParKind.GpuThreads(1024)],
+        'i': [parir.threads(NX-1)],
+        'j': [parir.threads(1024)],
     }
     kernel_wrap(ex, ey, hz, _fict_, NX, NY, TMAX, parallelize=p)
 

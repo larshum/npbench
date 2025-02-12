@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import parir
-from parir import ParKind
 import torch
 
 @parir.jit
@@ -45,6 +44,6 @@ def arc_distance(theta_1, phi_1, theta_2, phi_2):
     """
     N, = theta_1.shape
     distance_matrix = torch.empty_like(theta_1)
-    p = {'i': [ParKind.GpuThreads(N)]}
+    p = {'i': [parir.threads(N)]}
     kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N, parallelize=p)
     return distance_matrix
