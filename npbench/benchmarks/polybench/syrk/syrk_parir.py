@@ -3,11 +3,13 @@ import torch
 
 @parir.jit
 def syrk(alpha, beta, C, A, N, M):
+    parir.label('i')
     for i in range(N):
         for j in range(i+1):
-            C[i,j] = C[i,j] * beta[0]
+            C[i,j] *= beta[0]
+            parir.label('k')
             for k in range(M):
-                C[i,j] = C[i,j] + alpha[0] * A[i,k] * A[j,k]
+                C[i,j] += alpha[0] * A[i,k] * A[j,k]
 
 fn = None
 

@@ -4,8 +4,10 @@ import torch
 @parir.jit
 def kernel_wrap(A, B, N, TSTEPS):
     for t in range(TSTEPS):
+        parir.label('i')
         for i in range(1, N-1):
             B[i] = 0.33333 * (A[i-1] + A[i] + A[i+1])
+        parir.label('i')
         for i in range(1, N-1):
             A[i] = 0.33333 * (B[i-1] + B[i] + B[i+1])
 

@@ -1,16 +1,10 @@
 import parir
 import torch
 
-def match(b1, b2):
-    if b1 + b2 == 3:
-        return 1
-    else:
-        return 0
-
-
 @parir.jit
 def parir_kernel(table, seq, N):
     # "Parallel" outermost loop to trick compiler
+    parir.label('outer')
     for x in range(1):
         for i in range(N-1, -1, -1):
             for j in range(i+1, N):
@@ -29,5 +23,5 @@ def parir_kernel(table, seq, N):
 
 def kernel(N, seq):
     table = torch.zeros((N, N), dtype=torch.int32, device=seq.device)
-    parir_kernel(table, seq, N, parallelize={'x': [parir.threads(2)]})
+    parir_kernel(table, seq, N, parallelize={'outer': [parir.threads(2)]})
     return table

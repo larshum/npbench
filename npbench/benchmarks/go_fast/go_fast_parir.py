@@ -5,11 +5,14 @@ import torch
 
 @parir.jit
 def parir_kernel(a, tmp, out, N):
+    parir.label('i')
     for i in range(N):
-        tmp[0] = tmp[0] + parir.tanh(a[i, i])
-    for ix in range(N):
+        tmp[0] += parir.tanh(a[i,i])
+    parir.label('ix')
+    for i in range(N):
+        parir.label('j')
         for j in range(N):
-            out[ix, j] = a[ix, j] + tmp[0]
+            out[i,j] = a[i,j] + tmp[0]
 
 def go_fast(a):
     N, N = a.shape

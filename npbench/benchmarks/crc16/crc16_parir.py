@@ -5,6 +5,7 @@ import torch
 @parir.jit
 def crc16_kernel(data, poly, N, out):
     # Wrap in "parallel" loop to write sequential loop in Parir
+    parir.label('i')
     for i in range(1):
         crc = parir.int32(0xFFFF)
         for j in range(N):

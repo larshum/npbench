@@ -13,15 +13,19 @@ import torch
 
 @parir.jit
 def parir_kernel(data, radius, res, rmax, npt, N):
-    for ix in range(N):
-        rmax[0] = max(rmax[0], radius[ix])
+    parir.label('ix')
+    for i in range(N):
+        rmax[0] = max(rmax[0], radius[i])
+    parir.label('i')
     for i in range(npt):
         r1 = rmax[0] * parir.float64(i) / parir.float64(npt)
         r2 = rmax[0] * parir.float64(i+1) / parir.float64(npt)
         c = 0.0
+        parir.label('j')
         for j in range(N):
             c = c + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0)
         s = 0.0
+        parir.label('j')
         for j in range(N):
             s = s + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0) * data[j]
         res[i] = s / c

@@ -4,7 +4,9 @@ import torch
 @parir.jit
 def kernel_helper(path, N):
     for k in range(N):
+        parir.label('i')
         for i in range(N):
+            parir.label('j')
             for j in range(N):
                 path[i, j] = min(path[i, j], path[i, k] + path[k, j])
 

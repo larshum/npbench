@@ -31,6 +31,7 @@ import torch
 
 @parir.jit
 def kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N):
+    parir.label('i')
     for i in range(N):
         a = parir.sin((theta_2[i] - theta_1[i]) / 2.0) ** 2.0
         b = parir.cos(theta_1[i]) * parir.cos(theta_2[i]) * \

@@ -4,7 +4,9 @@ import torch
 
 @parir.jit
 def relu_kernel(x, N, M):
+    parir.label('i')
     for i in range(N):
+        parir.label('j')
         for j in range(M):
             x[i,j] = max(x[i,j], 0.0)
 
@@ -18,15 +20,19 @@ def relu(x):
 def softmax_kernel(x, out, N, M):
     for i in range(N):
         maxv = -parir.inf
-        for jx in range(M):
-            maxv = max(maxv, x[i,jx])
+        parir.label('jx')
+        for j in range(M):
+            maxv = max(maxv, x[i,j])
+        parir.label('j')
         for j in range(M):
             out[i,j] = parir.exp(x[i,j] - maxv)
         s = parir.float32(0.0)
-        for jx in range(M):
-            s = s + out[i,jx]
+        parir.label('jx')
         for j in range(M):
-            out[i,j] = out[i,j] / s
+            s += out[i,j]
+        parir.label('j')
+        for j in range(M):
+            out[i,j] /= s
 
 def softmax(x):
     N, M = x.shape

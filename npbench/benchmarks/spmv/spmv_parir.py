@@ -4,7 +4,9 @@ import torch
 
 @parir.jit
 def spmv_helper(A_row, A_col, A_val, N, x, y):
+    parir.label('i')
     for i in range(N - 1):
+        parir.label('j')
         for j in range(A_row[i], A_row[i+1]):
             y[i] = y[i] + A_val[j] * x[A_col[j]]
 

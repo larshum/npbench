@@ -3,11 +3,13 @@ import torch
 
 @parir.jit
 def kernel_wrap(alpha, beta, C, A, B, N, M):
+    parir.label('i')
     for i in range(N):
         for j in range(i+1):
-            C[i,j] = C[i,j] * beta
+            C[i,j] *= beta
+            parir.label('k')
             for k in range(M):
-                C[i,j] = C[i,j] + (A[j,k] * alpha * B[i,k] + B[j,k] * alpha * A[i,k])
+                C[i,j] += A[j,k] * alpha * B[i,k] + B[j,k] * alpha * A[i,k]
 
 def kernel(alpha, beta, C, A, B):
     N, M = A.shape

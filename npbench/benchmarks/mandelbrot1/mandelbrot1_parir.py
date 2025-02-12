@@ -10,19 +10,26 @@ import torch
 @parir.jit
 def parir_kernel(N, Z, C, I, M, K, horizon, maxiter):
     for n in range(maxiter):
+        parir.label('i')
         for i in range(M):
+            parir.label('j')
             for j in range(K):
                 I[i,j] = parir.sqrt(Z[i,j,0]**2.0+Z[i,j,1]**2.0) < horizon
+        parir.label('i')
         for i in range(M):
+            parir.label('j')
             for j in range(K):
                 if I[i,j]:
                     N[i,j] = n
+            parir.label('j')
             for j in range(K):
                 if I[i,j]:
                     tmp = Z[i,j,0]
                     Z[i,j,0] = Z[i,j,0]**2.0 - Z[i,j,1]**2.0 + C[i,j,0]
                     Z[i,j,1] = 2.0 * tmp * Z[i,j,1] + C[i,j,1]
+    parir.label('i')
     for i in range(M):
+        parir.label('j')
         for j in range(K):
             if N[i,j] == maxiter - 1:
                 N[i,j] = 0
