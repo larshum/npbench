@@ -4,10 +4,7 @@ import torch
 
 @parir.jit
 def parir_kernel(A, N):
-    # We add this loop so that we can perform operations outside any "actual"
-    # parallelism.
-    parir.label('outer')
-    for x in range(1):
+    with parir.gpu:
         A[0,0] = parir.sqrt(A[0,0])
         for i in range(1, N):
             for j in range(i):
@@ -25,17 +22,5 @@ def parir_kernel(A, N):
 
 def kernel(A):
     N, _ = A.shape
-    p = {
-        'outer': [parir.threads(2)],
-        'k': [parir.threads(256), parir.reduce()]
-    }
+    p = { 'k': [parir.threads(256), parir.reduce()] }
     parir_kernel(A, N, parallelize=p)
-    return
-
-    A[0, 0] = torch.sqrt(A[0, 0])
-    for i in range(1, A.shape[0]):
-        for j in range(i):
-            A[i, j] -= torch.dot(A[i, :j], A[j, :j])
-            A[i, j] /= A[j, j]
-        A[i, i] -= torch.dot(A[i, :i], A[i, :i])
-        A[i, i] = torch.sqrt(A[i, i])

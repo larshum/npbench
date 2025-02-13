@@ -4,7 +4,7 @@ import torch
 def kernel(A):
 
     Q = torch.zeros_like(A)
-    R = torch.zeros((A.shape[1], A.shape[1]), dtype=A.dtype)
+    R = torch.zeros((A.shape[1], A.shape[1]), dtype=A.dtype, device=A.device)
 
     for k in range(A.shape[1]):
         nrm = torch.dot(A[:, k], A[:, k])

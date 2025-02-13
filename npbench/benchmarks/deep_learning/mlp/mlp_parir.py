@@ -18,6 +18,7 @@ def relu(x):
 
 @parir.jit
 def softmax_kernel(x, out, N, M):
+    parir.label('i')
     for i in range(N):
         maxv = -parir.inf
         parir.label('jx')

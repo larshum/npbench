@@ -4,9 +4,7 @@ import torch
 
 @parir.jit
 def crc16_kernel(data, poly, N, out):
-    # Wrap in "parallel" loop to write sequential loop in Parir
-    parir.label('i')
-    for i in range(1):
+    with parir.gpu:
         crc = parir.int32(0xFFFF)
         for j in range(N):
             b = data[j]
@@ -25,6 +23,5 @@ def crc16(data, poly=0x8408):
     data = data.to(dtype=torch.int32)
     N, = data.shape
     out = torch.empty(1, dtype=torch.int32, device='cuda')
-    p = {'i': [parir.threads(2)]}
-    crc16_kernel(data, poly, N, out, parallelize=p)
+    crc16_kernel(data, poly, N, out)
     return int(out[0])

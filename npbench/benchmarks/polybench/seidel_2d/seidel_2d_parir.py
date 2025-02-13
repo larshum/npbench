@@ -4,8 +4,7 @@ import torch
 
 @parir.jit
 def parir_kernel(TSTEPS, N, A):
-    parir.label('outer')
-    for x in range(1):
+    with parir.gpu:
         for t in range(0, TSTEPS-1):
             for i in range(1, N-1):
                 for k in range(1, N-1):
@@ -18,4 +17,4 @@ def parir_kernel(TSTEPS, N, A):
 
 
 def kernel(TSTEPS, N, A):
-    parir_kernel(TSTEPS, N, A, parallelize={'outer': [parir.threads(2)]})
+    parir_kernel(TSTEPS, N, A)
