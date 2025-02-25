@@ -29,7 +29,7 @@ def conv2d(input, weights):
 # Batch normalization operator, as used in ResNet
 def batchnorm2d(x, eps=1e-5):
     mean = torch.mean(x, axis=0, keepdims=True)
-    std = torch.std(x, axis=0, keepdims=True)
+    std = torch.std(x, axis=0, unbiased=False, keepdims=True)
     return (x - mean) / torch.sqrt(std + eps)
 
 

@@ -9,10 +9,8 @@ def parir_kernel(a, tmp, out, N):
     for i in range(N):
         tmp[0] += parir.tanh(a[i,i])
     parir.label('ix')
-    for i in range(N):
-        parir.label('j')
-        for j in range(N):
-            out[i,j] = a[i,j] + tmp[0]
+    parir.label('j')
+    out[:,:] = a[:,:] + tmp[0]
 
 def go_fast(a):
     N, N = a.shape

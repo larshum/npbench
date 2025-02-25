@@ -2,38 +2,21 @@ import parir
 import torch
 
 
-@parir.jit
-def relu_kernel(x, N, M):
-    parir.label('i')
-    for i in range(N):
-        parir.label('j')
-        for j in range(M):
-            x[i,j] = max(x[i,j], 0.0)
-
 def relu(x):
-    N, M = x.shape
-    p = { 'i': [parir.threads(N)], 'j': [parir.threads(M)] }
-    relu_kernel(x, N, M, parallelize=p)
-    return x
+    return torch.maximum(x, torch.empty_like(x))
 
 @parir.jit
 def softmax_kernel(x, out, N, M):
     parir.label('i')
     for i in range(N):
-        maxv = -parir.inf
         parir.label('jx')
-        for j in range(M):
-            maxv = max(maxv, x[i,j])
+        maxv = parir.max(x[i,:], axis=0)
         parir.label('j')
-        for j in range(M):
-            out[i,j] = parir.exp(x[i,j] - maxv)
-        s = parir.float32(0.0)
+        out[i,:] = parir.exp(x[i,:] - maxv)
         parir.label('jx')
-        for j in range(M):
-            s += out[i,j]
+        s = parir.sum(out[i,:], axis=0)
         parir.label('j')
-        for j in range(M):
-            out[i,j] /= s
+        out[i,:] /= s
 
 def softmax(x):
     N, M = x.shape

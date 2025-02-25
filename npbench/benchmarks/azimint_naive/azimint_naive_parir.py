@@ -15,7 +15,7 @@ import torch
 def parir_kernel(data, radius, res, rmax, npt, N):
     parir.label('ix')
     for i in range(N):
-        rmax[0] = max(rmax[0], radius[i])
+        rmax[0] = parir.max(rmax[0], radius[i])
     parir.label('i')
     for i in range(npt):
         r1 = rmax[0] * parir.float64(i) / parir.float64(npt)

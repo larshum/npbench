@@ -5,10 +5,8 @@ import torch
 @parir.jit
 def parir_kernel(alpha, beta, C, A, B, M, N):
     parir.label('M')
-    for i in range(M):
-        parir.label('N')
-        for j in range(N):
-            C[i,j] *= beta
+    parir.label('N')
+    C[:,:] *= beta
 
     for i in range(M):
         parir.label('N')

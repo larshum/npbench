@@ -11,10 +11,7 @@ def syrk(alpha, beta, C, A, N, M):
             for k in range(M):
                 C[i,j] += alpha[0] * A[i,k] * A[j,k]
 
-fn = None
-
 def kernel(alpha, beta, C, A):
-    global fn
     alpha = torch.tensor([alpha], dtype=torch.float64, device='cuda')
     beta = torch.tensor([beta], dtype=torch.float64, device='cuda')
     N, M = A.shape

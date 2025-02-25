@@ -7,8 +7,7 @@ def kernel_helper(path, N):
         parir.label('i')
         for i in range(N):
             parir.label('j')
-            for j in range(N):
-                path[i, j] = min(path[i, j], path[i, k] + path[k, j])
+            path[i,:] = parir.min(path[i,:], path[i,k] + path[k,:])
 
 def kernel(path):
     N, N = path.shape

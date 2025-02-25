@@ -7,27 +7,23 @@ def parir_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):
     for i in range(W):
         y1[i, 0] = a[0] * imgIn[i, 0]
         y1[i, 1] = a[0] * imgIn[i, 1] + a[1] * imgIn[i, 0] + b[0] * y1[i, 0]
-    for jx in range(2, H):
+    for j in range(2, H):
         parir.label('i')
-        for i in range(W):
-            y1[i, jx] = (a[0] * imgIn[i, jx] + a[1] * imgIn[i, jx-1] +
-                         b[0] * y1[i, jx-1] + b[1] * y1[i, jx-2])
+        y1[:, j] = (a[0] * imgIn[:, j] + a[1] * imgIn[:, j-1] +
+                    b[0] * y1[:, j-1] + b[1] * y1[:, j-2])
 
     parir.label('i')
     for i in range(W):
-        y2[i, H-1] = 0.0
-        y2[i, H-2] = a[2] * imgIn[i, H-1]
+        y2[i, -1] = 0.0
+        y2[i, -2] = a[2] * imgIn[i, -1]
     for j in range(H-3, -1, -1):
         parir.label('i')
-        for i in range(W):
-            y2[i, j] = (a[2] * imgIn[i, j+1] + a[3] * imgIn[i, j+2] +
-                        b[0] * y2[i, j+1] + b[1] * y2[i, j+2])
+        y2[:, j] = (a[2] * imgIn[:, j+1] + a[3] * imgIn[:, j+2] +
+                    b[0] * y2[:, j+1] + b[1] * y2[:, j+2])
 
     parir.label('i')
-    for i in range(W):
-        parir.label('j')
-        for j in range(H):
-            imgOut[i, j] = c[0] * (y1[i, j] + y2[i, j])
+    parir.label('j')
+    imgOut[:, :] = c[0] * (y1[:, :] + y2[:, :])
 
     parir.label('j')
     for j in range(H):
@@ -35,9 +31,8 @@ def parir_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):
         y1[1, j] = a[4] * imgOut[1, j] + a[5] * imgOut[0, j] + b[0] * y1[0, j]
     for i in range(2, W):
         parir.label('j')
-        for j in range(H):
-            y1[i, j] = (a[4] * imgOut[i, j] + a[5] * imgOut[i-1, j] +
-                        b[0] * y1[i-1, j] + b[1] * y1[i-2, j])
+        y1[i, :] = (a[4] * imgOut[i, :] + a[5] * imgOut[i-1, :] +
+                    b[0] * y1[i-1, :] + b[1] * y1[i-2, :])
 
     parir.label('j')
     for j in range(H):
@@ -45,15 +40,12 @@ def parir_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):
         y2[W-2, j] = a[6] * imgOut[W-1, j]
     for i in range(W-3, -1, -1):
         parir.label('j')
-        for j in range(H):
-            y2[i, j] = (a[6] * imgOut[i+1, j] + a[7] * imgOut[i+2, j] +
-                        b[0] * y2[i+1, j] + b[1] * y2[i+2, j])
+        y2[i, :] = (a[6] * imgOut[i+1, :] + a[7] * imgOut[i+2, :] +
+                    b[0] * y2[i+1, :] + b[1] * y2[i+2, :])
 
     parir.label('i')
-    for i in range(W):
-        parir.label('j')
-        for j in range(H):
-            imgOut[i, j] = c[1] * (y1[i, j] + y2[i, j])
+    parir.label('j')
+    imgOut[:, :] = c[1] * (y1[:, :] + y2[:, :])
 
 def kernel(alpha, imgIn):
     y1 = torch.empty_like(imgIn)

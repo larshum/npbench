@@ -16,6 +16,6 @@ def kernel(L, x, b):
     N = x.shape[0]
     p = {
         'N': [parir.threads(N)],
-        'reduce': [parir.threads(32), parir.reduce()]
+        'reduce': [parir.threads(256), parir.reduce()]
     }
     parir_kernel(L, x, b, N, parallelize=p)

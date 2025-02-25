@@ -5,7 +5,7 @@ import torch
 
 @parir.jit
 def parir_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N):
-    for t in range(TSTEPS):
+    for t in range(1, TSTEPS+1):
         parir.label('i')
         for i in range(1, N-1):
             v[0,i] = 1.0

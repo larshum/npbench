@@ -2,18 +2,17 @@ import parir
 import torch
 
 @parir.jit
-def kernel_wrap(A, B, N, TSTEPS):
+def kernel_wrap(A, B, TSTEPS):
     for t in range(1, TSTEPS):
         parir.label('i')
-        for i in range(1, N-1):
-            parir.label('j')
-            for j in range(1, N-1):
-                B[i, j] = 0.2 * (A[i,j] + A[i,j-1] + A[i,j+1] + A[i+1,j] + A[i-1,j])
+        parir.label('j')
+        B[1:-1, 1:-1] = 0.2 * (A[1:-1, 1:-1] + A[1:-1, :-2] + A[1:-1, 2:] +
+                               A[2:, 1:-1] + A[:-2, 1:-1])
+
         parir.label('i')
-        for i in range(1, N-1):
-            parir.label('j')
-            for j in range(1, N-1):
-                A[i, j] = 0.2 * (B[i,j] + B[i,j-1] + B[i,j+1] + B[i+1,j] + B[i-1,j])
+        parir.label('j')
+        A[1:-1, 1:-1] = 0.2 * (B[1:-1, 1:-1] + B[1:-1, :-2] + B[1:-1, 2:] +
+                               B[2:, 1:-1] + B[:-2, 1:-1])
 
 
 def kernel(TSTEPS, A, B):
@@ -22,4 +21,4 @@ def kernel(TSTEPS, A, B):
         'i': [parir.threads(N-1)],
         'j': [parir.threads(N-1)],
     }
-    kernel_wrap(A, B, N, TSTEPS, parallelize=p)
+    kernel_wrap(A, B, TSTEPS, parallelize=p)

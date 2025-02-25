@@ -7,7 +7,7 @@ def compute_helper(array_1, array_2, N, M, a, b, c, out):
     for i in range(N):
         parir.label('j')
         for j in range(M):
-            clamped = min(max(array_1[i,j], parir.int64(2)), parir.int64(10))
+            clamped = parir.min(parir.max(array_1[i,j], parir.int64(2)), parir.int64(10))
             out[i,j] = clamped * a + array_2[i,j] * b + c
 
 def compute(array_1, array_2, a, b, c):
