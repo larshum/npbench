@@ -1,11 +1,10 @@
-import numpy as np
 import torch
 
 
 def kernel(M, float_n, data):
-    float_n = torch.tensor(float_n, dtype=torch.float64, device=data.device)
+    float_n = torch.tensor(float(float_n), dtype=torch.float64, device=data.device)
     mean = torch.mean(data, axis=0)
-    stddev = torch.std(data, axis=0)
+    stddev = torch.std(data, unbiased=False, axis=0)
     stddev[stddev <= 0.1] = 1.0
     data -= mean
     data /= torch.sqrt(float_n) * stddev
