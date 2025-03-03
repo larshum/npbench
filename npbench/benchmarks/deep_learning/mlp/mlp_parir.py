@@ -9,12 +9,12 @@ def relu(x):
 def softmax_kernel(x, out, N, M):
     parir.label('i')
     for i in range(N):
-        parir.label('jx')
-        maxv = parir.max(x[i,:], axis=0)
+        parir.label('j')
+        maxv = parir.max(x[i,:])
         parir.label('j')
         out[i,:] = parir.exp(x[i,:] - maxv)
-        parir.label('jx')
-        s = parir.sum(out[i,:], axis=0)
+        parir.label('j')
+        s = parir.sum(out[i,:])
         parir.label('j')
         out[i,:] /= s
 
@@ -24,7 +24,6 @@ def softmax(x):
     p = {
         'i': [parir.threads(N)],
         'j': [parir.threads(1024)],
-        'jx': [parir.threads(1024), parir.reduce()]
     }
     softmax_kernel(x, out, N, M, parallelize=p)
     return out

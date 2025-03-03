@@ -9,7 +9,7 @@ def parir_kernel(corr, data, M):
         parir.label('j')
         for j in range(i+1, M):
             parir.label('reduce')
-            corr[i, j] = parir.sum(data[:, i] * data[:, j], axis=0)
+            corr[i, j] = parir.sum(data[:, i] * data[:, j])
             corr[j, i] = corr[i, j]
 
 def kernel(M, float_n, data):

@@ -35,17 +35,17 @@ def getAcc_kernel(pos, mass, G, softening, dx, dy, dz, inv_r3, a, N):
     parir.label('N')
     for i in range(0, N):
         parir.label('reduce')
-        a[i,0] = parir.sum(G * (dx[i,:] * inv_r3[i,:]) * mass[:,0], axis=0)
+        a[i,0] = parir.sum(G * (dx[i,:] * inv_r3[i,:]) * mass[:,0])
         parir.label('reduce')
-        a[i,1] = parir.sum(G * (dy[i,:] * inv_r3[i,:]) * mass[:,0], axis=0)
+        a[i,1] = parir.sum(G * (dy[i,:] * inv_r3[i,:]) * mass[:,0])
         parir.label('reduce')
-        a[i,2] = parir.sum(G * (dz[i,:] * inv_r3[i,:]) * mass[:,0], axis=0)
+        a[i,2] = parir.sum(G * (dz[i,:] * inv_r3[i,:]) * mass[:,0])
 
 @parir.jit
 def getEnergy_kernel(pos, vel, mass, G, KE, PE, dx, dy, dz, inv_r, tmp, N):
     with parir.gpu:
         parir.label('i')
-        KE[0] = parir.sum(mass[:,0] * (vel[:,0]**2.0 + vel[:,1]**2.0 + vel[:,2]**2.0), axis=0)
+        KE[0] = parir.sum(mass[:,0] * (vel[:,0]**2.0 + vel[:,1]**2.0 + vel[:,2]**2.0))
         KE[0] *= 0.5
 
     parir.label('N2')

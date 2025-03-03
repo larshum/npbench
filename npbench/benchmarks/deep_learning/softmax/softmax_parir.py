@@ -10,15 +10,15 @@ def softmax_wrap(x, out, N, H, SM):
             parir.label('k')
             for k in range(SM):
                 parir.label('l')
-                m = parir.max(x[i,j,k,:], axis=0)
+                m = parir.max(x[i,j,k,:])
 
-                parir.label('l2')
+                parir.label('l')
                 out[i,j,k,:] = parir.exp(x[i,j,k,:]-m)
 
                 parir.label('l')
-                s = parir.sum(out[i,j,k,:], axis=0)
+                s = parir.sum(out[i,j,k,:])
 
-                parir.label('l2')
+                parir.label('l')
                 out[i,j,k,:] /= s
 
 # Numerically-stable version of softmax
@@ -29,8 +29,7 @@ def softmax(x):
         'i': [parir.threads(N)],
         'j': [parir.threads(H)],
         'k': [parir.threads(SM)],
-        'l': [parir.threads(SM), parir.reduce()],
-        'l2': [parir.threads(SM)]
+        'l': [parir.threads(256)],
     }
     softmax_wrap(x, out, N, H, SM, parallelize=p)
     return out

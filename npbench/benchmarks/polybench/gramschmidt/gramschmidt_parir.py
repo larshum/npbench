@@ -6,14 +6,14 @@ def parir_kernel(A, R, Q, M, N):
     for k in range(N):
         with parir.gpu:
             parir.label('i_reduce')
-            nrm = parir.sum(A[:,k] * A[:,k], axis=0)
+            nrm = parir.sum(A[:,k] * A[:,k])
             R[k,k] = parir.sqrt(nrm)
         parir.label('i')
         Q[:,k] = A[:,k] / R[k,k]
         parir.label('j')
         for j in range(k+1, N):
             parir.label('i_reduce')
-            R[k,j] = parir.sum(Q[:,k] * A[:,j], axis=0)
+            R[k,j] = parir.sum(Q[:,k] * A[:,j])
 
         parir.label('j')
         for j in range(k+1, N):
