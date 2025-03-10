@@ -51,6 +51,7 @@ def kernel(alpha, imgIn):
     y1 = torch.empty_like(imgIn)
     y2 = torch.empty_like(imgIn)
     imgOut = torch.empty_like(imgIn)
+    alpha = torch.tensor(alpha, dtype=torch.float64)
     W, H = imgIn.shape
     k = (1.0 - parir.exp(-alpha)) * (1.0 - parir.exp(-alpha)) / (
         1.0 + alpha * parir.exp(-alpha) - parir.exp(2.0 * alpha))
