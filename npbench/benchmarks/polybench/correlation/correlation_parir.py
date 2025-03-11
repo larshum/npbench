@@ -8,7 +8,6 @@ def parir_kernel(corr, data, M):
     for i in range(M-1):
         parir.label('j')
         for j in range(i+1, M):
-            parir.label('reduce')
             corr[i, j] = parir.sum(data[:, i] * data[:, j])
             corr[j, i] = corr[i, j]
 
@@ -22,8 +21,7 @@ def kernel(M, float_n, data):
     corr = torch.eye(M, dtype=data.dtype, device=data.device)
     p = {
         'i': [parir.threads(M-1)],
-        'j': [parir.threads(M//2)],
-        'reduce': [parir.threads(1024)]
+        'j': [parir.threads(256)],
     }
     parir_kernel(corr, data, M, parallelize=p)
     return corr
