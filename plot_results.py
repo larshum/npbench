@@ -85,6 +85,10 @@ if __name__ == "__main__":
                         choices=['S', 'M', 'L', 'paper'],
                         nargs="?",
                         default='S')
+    parser.add_argument("-b",
+                        "--baseline",
+                        nargs="?",
+                        default="numpy")
     args = vars(parser.parse_args())
 
 # create a database connection
@@ -125,19 +129,19 @@ data = pd.merge(left=bestgroup,
 data = data.drop(['mode', 'details'], axis=1).reset_index(drop=True)
 
 frmwrks = list(data['framework'].unique())
-assert ('numpy' in frmwrks)
-frmwrks.remove('numpy')
-frmwrks.append('numpy')
+assert (args["baseline"] in frmwrks)
+frmwrks.remove(args["baseline"])
+frmwrks.append(args["baseline"])
 lfilter = ['benchmark', 'domain'] + frmwrks
 
-# get improvement over numpy (keep times in best_wide_time for numpy column), reorder columns
+# get improvement over baseline (keep times in best_wide_time for baseline column), reorder columns
 best_wide = best.pivot_table(index=["benchmark", "domain"],
                              columns="framework",
                              values="time").reset_index()  # pivot to wide form
 best_wide = best_wide[lfilter].reset_index(drop=True)
 best_wide_time = best_wide.copy(deep=True)
 for f in frmwrks:
-    best_wide[f] = best_wide[f] / best_wide_time['numpy']
+    best_wide[f] = best_wide[f] / best_wide_time[args["baseline"]]
 
 # compute ci-size for each
 cidata = data.groupby(["benchmark", "domain", "framework"], dropna=False).agg({
@@ -206,7 +210,7 @@ for j in range(len(overall_wide.columns)):
                             color="white",
                             fontsize=8)
     else:
-        label = overall_time_wide['numpy'].to_numpy()[0]
+        label = overall_time_wide[args["baseline"]].to_numpy()[0]
 
 # plot benchmark heatmap
 hm_data = best_wide.drop(['benchmark', 'domain'], axis=1)
@@ -231,7 +235,7 @@ plt.setp(ax1.get_xticklabels(),
          rotation_mode="anchor")
 
 for i in range(len(best_wide['benchmark'])):
-    # annotate with improvement over numpy
+    # annotate with improvement over baseline
     for j in range(len(hm_data.columns)):
         b = best_wide['benchmark'][i]
         f = hm_data.columns[j]
@@ -275,7 +279,7 @@ for i in range(len(best_wide['benchmark'])):
                                     color="white",
                                     fontsize=8)
         else:
-            label = best_wide_time['numpy'].to_numpy()[i]
+            label = best_wide_time[args["baseline"]].to_numpy()[i]
             p = cidata[(cidata['framework_'] == f)
                        & (cidata['benchmark_'] == b)]['perc']
             try:
