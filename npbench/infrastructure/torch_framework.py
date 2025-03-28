@@ -27,12 +27,12 @@ class TorchFramework(Framework):
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
 
-        if self.fname == "torch_gpu":
+        if self.fname == "torch":
             import torch
 
             def cp_copy_func(arr):
                 t = torch.tensor(arr)
-                if self.fname == "torch_gpu":
+                if self.fname == "torch":
                     t = t.cuda()
                 torch.cuda.synchronize()
                 return t
