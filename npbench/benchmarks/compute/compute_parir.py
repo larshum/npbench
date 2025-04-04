@@ -17,8 +17,8 @@ def compute(array_1, array_2, a, b, c):
     out = torch.zeros_like(array_1)
     N, M = array_1.shape
     p = {
-        'i': [parir.threads(N)],
-        'j': [parir.threads(1024)]
+        'i': parir.threads(N),
+        'j': parir.threads(1024)
     }
     compute_helper(array_1, array_2, N, M, a, b, c, out, parallelize=p)
     return out

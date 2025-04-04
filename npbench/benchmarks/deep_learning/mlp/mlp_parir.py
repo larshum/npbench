@@ -22,8 +22,8 @@ def softmax(x):
     N, M = x.shape
     out = torch.empty_like(x)
     p = {
-        'i': [parir.threads(N)],
-        'j': [parir.threads(1024)],
+        'i': parir.threads(N),
+        'j': parir.threads(1024),
     }
     softmax_kernel(x, out, N, M, parallelize=p)
     return out

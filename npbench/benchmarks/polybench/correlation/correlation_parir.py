@@ -20,8 +20,8 @@ def kernel(M, float_n, data):
     data /= torch.sqrt(float_n) * stddev
     corr = torch.eye(M, dtype=data.dtype, device=data.device)
     p = {
-        'i': [parir.threads(M-1)],
-        'j': [parir.threads(256)],
+        'i': parir.threads(M-1),
+        'j': parir.threads(256),
     }
     parir_kernel(corr, data, M, parallelize=p)
     return corr

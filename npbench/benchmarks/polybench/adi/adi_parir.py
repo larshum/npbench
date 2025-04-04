@@ -58,6 +58,6 @@ def kernel(TSTEPS, N, u):
     a = c = torch.tensor(-mul1 / 2.0, dtype=torch.float64, device='cuda')
     b = e = torch.tensor(1.0 + mul2, dtype=torch.float64, device='cuda')
     d = f = torch.tensor(-mul2 / 2.0, dtype=torch.float64, device='cuda')
-    par = { 'i': [parir.threads(N-2)] }
+    par = { 'i': parir.threads(N-2) }
     parir_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N, parallelize=par)
     return u

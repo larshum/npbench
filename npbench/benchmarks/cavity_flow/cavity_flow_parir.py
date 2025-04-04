@@ -105,7 +105,7 @@ def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
         vn = v.detach().clone()
         pn = p.detach().clone()
 
-        par = {'ny': [parir.threads(ny)], 'nx': [parir.threads(nx)]}
+        par = {'ny': parir.threads(ny), 'nx': parir.threads(nx)}
         cavity_flow_kernel(
             nx, ny, nt, nit, u, un, v, vn, b, dt, dx, dy, p, pn, rho, nu,
             parallelize=par

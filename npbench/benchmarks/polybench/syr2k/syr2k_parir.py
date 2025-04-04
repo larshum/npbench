@@ -14,8 +14,8 @@ def kernel_wrap(alpha, beta, C, A, B, N, M):
 def kernel(alpha, beta, C, A, B):
     N, M = A.shape
     p = {
-        'i': [parir.threads(N)],
-        'k': [parir.threads(256), parir.reduce()]
+        'i': parir.threads(N),
+        'k': parir.threads(256).reduce()
     }
     kernel_wrap(alpha, beta, C, A, B, N, M, parallelize=p)
 

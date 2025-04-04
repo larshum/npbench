@@ -36,6 +36,6 @@ def kernel(A, b):
     N, N = A.shape
     x = torch.zeros_like(b)
     y = torch.zeros_like(b)
-    p = {'k': [parir.threads(128), parir.reduce()]}
+    p = {'k': parir.threads(128).reduce()}
     ludcmp_kernel(A, b, x, y, N, parallelize=p)
     return x, y

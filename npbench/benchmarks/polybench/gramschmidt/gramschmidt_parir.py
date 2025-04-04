@@ -27,9 +27,9 @@ def kernel(A):
 
     M, N = A.shape
     p = {
-        'i': [parir.threads(M)],
-        'i_reduce': [parir.threads(128), parir.reduce()],
-        'j': [parir.threads(N)]
+        'i': parir.threads(M),
+        'i_reduce': parir.threads(128).reduce(),
+        'j': parir.threads(N)
     }
     parir_kernel(A, R, Q, M, N, parallelize=p)
     return Q, R

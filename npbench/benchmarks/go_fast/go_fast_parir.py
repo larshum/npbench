@@ -17,9 +17,9 @@ def go_fast(a):
     tmp = torch.tensor([0.0], dtype=a.dtype, device=a.device)
     out = torch.empty_like(a)
     p = {
-        'i': [parir.threads(1024), parir.reduce()],
-        'ix': [parir.threads(N)],
-        'j': [parir.threads(N)]
+        'i': parir.threads(1024).reduce(),
+        'ix': parir.threads(N),
+        'j': parir.threads(N)
     }
     parir_kernel(a, tmp, out, N, parallelize=p)
     return out

@@ -18,8 +18,8 @@ def kernel(M, float_n, data):
     data -= mean
     cov = torch.zeros((M, M), dtype=data.dtype, device=data.device)
     p = {
-        'i': [parir.threads(M)],
-        'j': [parir.threads(256)],
+        'i': parir.threads(M),
+        'j': parir.threads(256),
     }
     covariance_parir(cov, data, float_n, M, parallelize=p)
     return cov

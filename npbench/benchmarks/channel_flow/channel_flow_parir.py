@@ -175,7 +175,7 @@ def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
         pn = torch.empty_like(p)
         b = torch.zeros_like(u)
 
-        par = {'ny': [parir.threads(ny)], 'nx': [parir.threads(nx)]}
+        par = {'ny': parir.threads(ny), 'nx': parir.threads(nx)}
         channel_flow_kernel(
             nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b,
             parallelize=par

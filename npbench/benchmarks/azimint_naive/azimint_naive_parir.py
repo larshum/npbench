@@ -35,9 +35,9 @@ def azimint_naive(data, radius, npt):
     rmax = torch.empty((1,), dtype=torch.float64, device=data.device)
     res = torch.zeros(npt, dtype=torch.float64, device=data.device)
     p = {
-        'i': [parir.threads(npt)],
-        'ix': [parir.threads(1024), parir.reduce()],
-        'j': [parir.threads(1024), parir.reduce()]
+        'i': parir.threads(npt),
+        'ix': parir.threads(1024).reduce(),
+        'j': parir.threads(1024).reduce()
     }
     parir_kernel(data, radius, res, rmax, npt, N, parallelize=p)
     return res

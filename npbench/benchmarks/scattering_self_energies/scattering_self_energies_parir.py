@@ -61,10 +61,10 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
     Nkz, NE, NA, Norb, Norb = G.shape
     Nqz, Nw, NA, NB, N3D, N3D = D.shape
     p = {
-        'Nkz': [parir.threads(Nkz)],
-        'NE': [parir.threads(NE)],
-        'NA': [parir.threads(NA)],
-        'threads': [parir.threads(32)]
+        'Nkz': parir.threads(Nkz),
+        'NE': parir.threads(NE),
+        'NA': parir.threads(NA),
+        'threads': parir.threads(32)
     }
     dHG = torch.zeros(Nkz, NE, NA, Norb, Norb, dtype=G.dtype, device=G.device)
     dHD = torch.zeros_like(dHG)

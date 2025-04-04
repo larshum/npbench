@@ -40,7 +40,7 @@ def mandelbrot(xmin, xmax, ymin, ymax, xn, yn, maxiter, horizon=2.0):
     Z = torch.zeros(C.shape, dtype=torch.complex128, device='cuda')
     I = torch.empty_like(Z, dtype=torch.bool)
     M, K = C.shape
-    p = { 'i': [parir.threads(M)], 'j': [parir.threads(K)] }
+    p = { 'i': parir.threads(M), 'j': parir.threads(K) }
     Z = torch.view_as_real(Z)
     C = torch.view_as_real(C)
     parir_kernel(N, Z, C, I, M, K, horizon, maxiter, parallelize=p)

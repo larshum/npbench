@@ -116,7 +116,7 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     divided = torch.empty_like(gav)
     datacol = torch.empty_like(gav)
 
-    p = {'I': [parir.threads(I)], 'J': [parir.threads(J)]}
+    p = {'I': parir.threads(I), 'J': parir.threads(J)}
     vadv_parir(
         utens_stage, u_stage, wcon, u_pos, utens, dtr_stage, ccol, dcol,
         data_col, I, J, K, BET_M, BET_P, gav, gcv, as_, cs, acol, bcol,

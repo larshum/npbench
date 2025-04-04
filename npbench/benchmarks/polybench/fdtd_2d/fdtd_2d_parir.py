@@ -22,8 +22,8 @@ def kernel_wrap(ex, ey, hz, _fict_, TMAX):
 def kernel(TMAX, ex, ey, hz, _fict_):
     NX, NY = ex.shape
     p = {
-        'i': [parir.threads(NX-1)],
-        'j': [parir.threads(1024)],
+        'i': parir.threads(NX-1),
+        'j': parir.threads(1024),
     }
     kernel_wrap(ex, ey, hz, _fict_, TMAX, parallelize=p)
 

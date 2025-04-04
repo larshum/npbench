@@ -51,7 +51,7 @@ def hdiff(in_field, out_field, coeff):
     res2 = torch.empty(I,J+1,K, dtype=in_field.dtype, device=in_field.device)
     flx_field = torch.empty(I+1,J,K, dtype=in_field.dtype, device=in_field.device)
     fly_field = torch.empty(I,J+1,K, dtype=in_field.dtype, device=in_field.device)
-    p = {'I': [parir.threads(I)], 'J': [parir.threads(J)], 'K': [parir.threads(K)]}
+    p = {'I': parir.threads(I), 'J': parir.threads(J), 'K': parir.threads(K)}
     hdiff_kernel(
         in_field, out_field, coeff, lap_field, res1, res2, flx_field, fly_field, I, J, K,
         parallelize=p
