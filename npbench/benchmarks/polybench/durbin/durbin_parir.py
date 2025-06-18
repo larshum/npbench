@@ -29,10 +29,10 @@ def kernel(r):
     temp = torch.empty_like(y)
     N, = r.shape
     p = {
-        'k_red': [parir.threads(512), parir.reduce()],
-        'k': [parir.threads(512)]
+        'k_red': parir.threads(512).reduce(),
+        'k': parir.threads(512)
     }
-    parir_kernel(r, y, temp, N, parallelize=p)
+    parir_kernel(r, y, temp, N, opts=parir.parallelize(p))
     return y
 
     alpha = -r[0]

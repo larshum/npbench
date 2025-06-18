@@ -16,8 +16,8 @@ def kernel(alpha, beta, C, A):
     beta = torch.tensor([beta], dtype=torch.float64, device='cuda')
     N, M = A.shape
     p = {
-        'i': [parir.threads(N)],
-        'k': [parir.threads(256), parir.reduce()]
+        'i': parir.threads(N),
+        'k': parir.threads(256).reduce()
     }
-    syrk(alpha, beta, C, A, N, M, parallelize=p)
+    syrk(alpha, beta, C, A, N, M, opts=parir.parallelize(p))
 

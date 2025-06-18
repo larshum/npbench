@@ -61,10 +61,10 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
     Nkz, NE, NA, Norb, Norb = G.shape
     Nqz, Nw, NA, NB, N3D, N3D = D.shape
     p = {
-        'Nkz': [parir.threads(Nkz)],
-        'NE': [parir.threads(NE)],
-        'NA': [parir.threads(NA)],
-        'threads': [parir.threads(32)]
+        'Nkz': parir.threads(Nkz),
+        'NE': parir.threads(NE),
+        'NA': parir.threads(NA),
+        'threads': parir.threads(32)
     }
     dHG = torch.zeros(Nkz, NE, NA, Norb, Norb, dtype=G.dtype, device=G.device)
     dHD = torch.zeros_like(dHG)
@@ -72,13 +72,5 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
         neigh_idx, torch.view_as_real(dH), torch.view_as_real(G),
         torch.view_as_real(D), torch.view_as_real(Sigma),
         torch.view_as_real(dHG), torch.view_as_real(dHD),
-        Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, parallelize=p
+        Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, opts=parir.parallelize(p)
     )
-    #args = [
-    #    neigh_idx, torch.view_as_real(dH), torch.view_as_real(G),
-    #    torch.view_as_real(D), torch.view_as_real(Sigma),
-    #    torch.view_as_real(dHG), torch.view_as_real(dHD),
-    #    Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb
-    #]
-    #print(parir.print_compiled(scattering_self_energies_kernel, args, p))
-    #exit(0)

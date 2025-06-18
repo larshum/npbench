@@ -25,8 +25,8 @@ def conv2d(input, weights):
     C_in = input.shape[3]
     C_out = weights.shape[3]
     output = torch.empty((N, H_out, W_out, C_out), dtype=torch.float32, device=weights.device)
-    p = {'i': [parir.threads(H_out)], 'j': [parir.threads(W_out)]}
-    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, parallelize=p)
+    p = {'i': parir.threads(H_out), 'j': parir.threads(W_out)}
+    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parir.parallelize(p))
     return output
 
 

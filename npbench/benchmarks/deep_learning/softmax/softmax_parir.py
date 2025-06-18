@@ -26,10 +26,10 @@ def softmax(x):
     N, H, SM, SM = x.shape
     out = torch.zeros_like(x)
     p = {
-        'i': [parir.threads(N)],
-        'j': [parir.threads(H)],
-        'k': [parir.threads(SM)],
-        'l': [parir.threads(256)],
+        'i': parir.threads(N),
+        'j': parir.threads(H),
+        'k': parir.threads(SM),
+        'l': parir.threads(256),
     }
-    softmax_wrap(x, out, N, H, SM, parallelize=p)
+    softmax_wrap(x, out, N, H, SM, opts=parir.parallelize(p))
     return out

@@ -28,8 +28,8 @@ def parir_kernel(A, B, TSTEPS):
 
 def kernel(TSTEPS, A, B):
     p = {
-        'i': [parir.threads(64)],
-        'j': [parir.threads(64)],
-        'k': [parir.threads(64)]
+        'i': parir.threads(64),
+        'j': parir.threads(64),
+        'k': parir.threads(64)
     }
-    parir_kernel(A, B, TSTEPS, parallelize=p)
+    parir_kernel(A, B, TSTEPS, opts=parir.parallelize(p))

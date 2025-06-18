@@ -22,5 +22,5 @@ def lu_parir(A, N):
 
 def kernel(A):
     N, N = A.shape
-    p = {'k': [parir.threads(128), parir.reduce()]}
-    lu_parir(A, N, parallelize=p)
+    p = {'k': parir.threads(128).reduce()}
+    lu_parir(A, N, opts=parir.parallelize(p))

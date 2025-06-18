@@ -18,7 +18,7 @@ def kernel_wrap(A, B, TSTEPS):
 def kernel(TSTEPS, A, B):
     N, N = A.shape
     p = {
-        'i': [parir.threads(N-1)],
-        'j': [parir.threads(N-1)],
+        'i': parir.threads(N-1),
+        'j': parir.threads(N-1),
     }
-    kernel_wrap(A, B, TSTEPS, parallelize=p)
+    kernel_wrap(A, B, TSTEPS, opts=parir.parallelize(p))

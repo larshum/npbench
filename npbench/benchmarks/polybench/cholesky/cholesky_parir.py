@@ -22,5 +22,5 @@ def parir_kernel(A, N):
 
 def kernel(A):
     N, _ = A.shape
-    p = { 'k': [parir.threads(256), parir.reduce()] }
-    parir_kernel(A, N, parallelize=p)
+    p = { 'k': parir.threads(256).reduce() }
+    parir_kernel(A, N, opts=parir.parallelize(p))

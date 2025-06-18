@@ -26,8 +26,8 @@ def parir_kernel(alpha, beta, C, A, B, M, N):
 def kernel(alpha, beta, C, A, B):
     M, N = C.shape
     p = {
-        'M': [parir.threads(M)],
-        'N': [parir.threads(N)],
-        'i_red': [parir.threads(32), parir.reduce()]
+        'M': parir.threads(M),
+        'N': parir.threads(N),
+        'i_red': parir.threads(32).reduce()
     }
-    parir_kernel(alpha, beta, C, A, B, M, N, parallelize=p)
+    parir_kernel(alpha, beta, C, A, B, M, N, opts=parir.parallelize(p))

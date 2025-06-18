@@ -12,7 +12,7 @@ def kernel_helper(path, N):
 def kernel(path):
     N, N = path.shape
     p = {
-        'i': [parir.threads(N)],
-        'j': [parir.threads(N)]
+        'i': parir.threads(N),
+        'j': parir.threads(N)
     }
-    kernel_helper(path, N, parallelize=p)
+    kernel_helper(path, N, opts=parir.parallelize(p))

@@ -15,4 +15,4 @@ def parir_kernel(TSTEPS, N, A):
                     A[i, j] /= 9.0
 
 def kernel(TSTEPS, N, A):
-    parir_kernel(TSTEPS, N, A)
+    parir_kernel(TSTEPS, N, A, opts=parir.parallelize({}))
