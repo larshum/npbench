@@ -36,6 +36,7 @@ class ParirFramework(Framework):
     def copy_func(self) -> Callable:
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
+
         import parir
         import torch
         if self.fname == "parir_cuda":
@@ -45,7 +46,12 @@ class ParirFramework(Framework):
                 return t
             return copy_parir
         else:
-            return lambda t: torch.tensor(t)
+            def copy_parir(t):
+                t = torch.tensor(t)
+                if t.dtype == torch.float64:
+                    return t.to(torch.float32)
+                return t
+            return copy_parir
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
         """ Generates the setup-string that should be used before calling

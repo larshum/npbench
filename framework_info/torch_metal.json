@@ -1,7 +1,7 @@
 {
     "framework": {
-        "simple_name": "torch",
-        "full_name": "PyTorch",
+        "simple_name": "torch_metal",
+        "full_name": "PyTorch Metal",
         "prefix": "torch",
         "postfix": "torch",
         "class": "TorchFramework",

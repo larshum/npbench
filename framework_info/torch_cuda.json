@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "torch_cuda",
+        "full_name": "PyTorch CUDA",
+        "prefix": "torch",
+        "postfix": "torch",
+        "class": "TorchFramework",
+        "arch": "gpu"
+    }
+}
