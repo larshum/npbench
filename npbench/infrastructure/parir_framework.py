@@ -20,29 +20,32 @@ class ParirFramework(Framework):
         return [p.version for p in pkg_resources.working_set if p.project_name.startswith("parir")][0]
 
     def imports(self) -> Dict[str, Any]:
-        import torch
         import parir
+        import torch
         return {'parir': parir, 'torch': torch}
+
+    def get_target_backend(self):
+        if self.fname == "parir_cuda":
+            return "parir.CompileBackend.Cuda"
+        elif self.fname == "parir_metal":
+            return "parir.CompileBackend.Metal"
+
+    def get_sync_str(self):
+        return f"parir.sync({self.get_target_backend()})"
 
     def copy_func(self) -> Callable:
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
+        import parir
+        import torch
         if self.fname == "parir_cuda":
-            import torch
-            def copy_torch(t):
+            def copy_parir(t):
                 t = torch.tensor(t, device='cuda')
-                torch.cuda.synchronize()
+                eval(self.get_sync_str())
                 return t
-            return copy_torch
-        elif self.fname == "parir_metal":
-            import torch
+            return copy_parir
+        else:
             return lambda t: torch.tensor(t)
-
-    def get_sync_str(self):
-        if self.fname == "parir_cuda":
-            return "parir.sync(parir.CompileBackend.Cuda)"
-        elif self.fname == "parir_metal":
-            return "parir.sync(parir.CompileBackend.Metal)"
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
         """ Generates the setup-string that should be used before calling
