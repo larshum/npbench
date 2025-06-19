@@ -11,9 +11,9 @@ def compute_helper(array_1, array_2, N, M, a, b, c, out):
             out[i,j] = clamped * a + array_2[i,j] * b + c
 
 def compute(array_1, array_2, a, b, c):
-    a = torch.tensor(a, device='cuda')
-    b = torch.tensor(b, device='cuda')
-    c = torch.tensor(c, device='cuda')
+    a = torch.tensor(a)
+    b = torch.tensor(b)
+    c = torch.tensor(c)
     out = torch.zeros_like(array_1)
     N, M = array_1.shape
     p = {

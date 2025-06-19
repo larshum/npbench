@@ -33,11 +33,11 @@ def parir_kernel(N, Z, C, I, M, K, horizon, maxiter):
                 N[i,j] = 0
 
 def mandelbrot(xmin, xmax, ymin, ymax, xn, yn, maxiter, horizon=2.0):
-    X = torch.linspace(xmin, xmax, xn, dtype=torch.float64, device='cuda')
-    Y = torch.linspace(ymin, ymax, yn, dtype=torch.float64, device='cuda')
+    X = torch.linspace(xmin, xmax, xn, dtype=torch.float64)
+    Y = torch.linspace(ymin, ymax, yn, dtype=torch.float64)
     C = X + Y[:, None] * 1j
-    N = torch.zeros(C.shape, dtype=torch.int64, device='cuda')
-    Z = torch.zeros(C.shape, dtype=torch.complex128, device='cuda')
+    N = torch.zeros(C.shape, dtype=torch.int64)
+    Z = torch.zeros(C.shape, dtype=torch.complex128)
     I = torch.empty_like(Z, dtype=torch.bool)
     M, K = C.shape
     p = { 'i': parir.threads(M), 'j': parir.threads(K) }

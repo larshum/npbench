@@ -22,6 +22,6 @@ def crc16_kernel(data, poly, N, out):
 def crc16(data, poly=0x8408):
     data = data.to(dtype=torch.int32)
     N, = data.shape
-    out = torch.empty(1, dtype=torch.int32, device='cuda')
+    out = torch.empty(1, dtype=torch.int32)
     crc16_kernel(data, poly, N, out, opts=parir.parallelize({}))
     return int(out[0])

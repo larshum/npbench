@@ -16,7 +16,7 @@ def spmv(A_row, A_col, A_val, x):
     N, = A_row.shape
     A_row = A_row.to(dtype=torch.int64)
     A_col = A_col.to(dtype=torch.int64)
-    y = torch.zeros(N - 1, dtype=A_val.dtype, device='cuda')
+    y = torch.zeros(N - 1, dtype=A_val.dtype)
     p = {
         'i': parir.threads(N-1),
         'j': parir.threads(64).reduce(),
