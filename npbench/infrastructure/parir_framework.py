@@ -27,12 +27,22 @@ class ParirFramework(Framework):
     def copy_func(self) -> Callable:
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
-        import torch
-        def copy_torch(t):
-            t = torch.tensor(t, device='cuda')
-            torch.cuda.synchronize()
-            return t
-        return copy_torch
+        if self.fname == "parir_cuda":
+            import torch
+            def copy_torch(t):
+                t = torch.tensor(t, device='cuda')
+                torch.cuda.synchronize()
+                return t
+            return copy_torch
+        elif self.fname == "parir_metal":
+            import torch
+            return lambda t: torch.tensor(t)
+
+    def get_sync_str(self):
+        if self.fname == "parir_cuda":
+            return "parir.sync(parir.CompileBackend.Cuda)"
+        elif self.fname == "parir_metal":
+            return "parir.sync(parir.CompileBackend.Metal)"
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
         """ Generates the setup-string that should be used before calling
@@ -42,7 +52,7 @@ class ParirFramework(Framework):
         :returns: The corresponding setup-string.
         """
 
-        sync_str = "torch.cuda.synchronize()"
+        sync_str = self.get_sync_str()
         if len(bench.info["array_args"]):
             arg_str = self.out_arg_str(bench, impl)
             copy_args = ["__npb_copy({})".format(a) for a in bench.info["array_args"]]
@@ -58,5 +68,5 @@ class ParirFramework(Framework):
 
         arg_str = self.arg_str(bench, impl)
         main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
-        sync_str = "torch.cuda.synchronize()"
+        sync_str = self.get_sync_str()
         return main_exec_str + "; " + sync_str

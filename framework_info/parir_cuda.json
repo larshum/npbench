@@ -1,7 +1,7 @@
 {
     "framework": {
-        "simple_name": "parir",
-        "full_name": "Parir",
+        "simple_name": "parir_cuda",
+        "full_name": "Parir CUDA",
         "prefix": "parir",
         "postfix": "parir",
         "class": "ParirFramework",
