@@ -113,7 +113,7 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     # NOTE: We add a dummy dimension to KE and PE to ensure they are passed as
     # tensors to the underlying kernels, so that we can modify individual
     # elements within kernels.
-    KE = torch.empty((Nt + 1, 1), dtype=torch.float64, device=pos.device)
+    KE = torch.empty((Nt + 1, 1), dtype=pos.dtype, device=pos.device)
     PE = torch.empty_like(KE)
     a = torch.empty((N, 3), dtype=pos.dtype, device=pos.device)
     dx = torch.empty((N, N), dtype=pos.dtype, device=pos.device)

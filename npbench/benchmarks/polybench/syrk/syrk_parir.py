@@ -12,8 +12,8 @@ def syrk(alpha, beta, C, A, N, M):
                 C[i,j] += alpha[0] * A[i,k] * A[j,k]
 
 def kernel(alpha, beta, C, A):
-    alpha = torch.tensor([alpha], dtype=torch.float64)
-    beta = torch.tensor([beta], dtype=torch.float64)
+    alpha = torch.tensor([alpha], dtype=A.dtype)
+    beta = torch.tensor([beta], dtype=A.dtype)
     N, M = A.shape
     p = {
         'i': parir.threads(N),

@@ -12,7 +12,7 @@ def parir_kernel(corr, data, M):
             corr[j, i] = corr[i, j]
 
 def kernel(M, float_n, data):
-    float_n = torch.tensor(float(float_n), dtype=torch.float64, device=data.device)
+    float_n = torch.tensor(float(float_n), dtype=data.dtype, device=data.device)
     mean = torch.mean(data, axis=0)
     stddev = torch.std(data, unbiased=False, axis=0)
     stddev[stddev <= 0.1] = 1.0
