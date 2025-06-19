@@ -12,7 +12,7 @@ function run_benchmarks {
   for f in ${FRAMEWORKS[@]}; do
     echo "Benchmarking framework $f"
     for b in ${BENCHMARKS[@]}; do
-      python run_benchmark.py -f $f -b $b -p $PRESET >> ${OUT}/$f.out 2>> ${OUT}/$f.err
+      python run_benchmark.py -f $f -b $b -p $PRESET -x $BASELINE >> ${OUT}/$f.out 2>> ${OUT}/$f.err
     done
   done
   python plot_results.py -p $PRESET -b $BASELINE

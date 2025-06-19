@@ -15,6 +15,11 @@ if __name__ == "__main__":
                         type=str,
                         nargs="?",
                         default="numpy")
+    parser.add_argument("-x",
+                        "--validating-framework",
+                        type=str,
+                        nargs="?",
+                        default="numpy")
     parser.add_argument("-p",
                         "--preset",
                         choices=['S', 'M', 'L', 'paper'],
@@ -50,7 +55,7 @@ if __name__ == "__main__":
     frmwrk = generate_framework(args["framework"],
                                 save_strict=args["save_strict_sdfg"],
                                 load_strict=args["load_strict_sdfg"])
-    numpy = generate_framework("numpy")
+    numpy = generate_framework(args["validating_framework"])
     lcount = LineCount(bench, frmwrk, numpy)
     lcount.count()
     test = Test(bench, frmwrk, numpy)
