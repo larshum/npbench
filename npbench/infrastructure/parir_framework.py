@@ -41,7 +41,7 @@ class ParirFramework(Framework):
         if self.fname == "parir_cuda":
             def copy_parir(t):
                 t = torch.tensor(t, device='cuda')
-                eval(self.get_sync_str())
+                torch.cuda.synchronize()
                 return t
             return copy_parir
         else:
