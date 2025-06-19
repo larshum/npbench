@@ -121,5 +121,5 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
         utens_stage, u_stage, wcon, u_pos, utens, dtr_stage, ccol, dcol,
         data_col, I, J, K, BET_M, BET_P, gav, gcv, as_, cs, acol, bcol,
         correction_term, divided, datacol,
-        parallelize=p
+        opts=parir.parallelize(p)
     )

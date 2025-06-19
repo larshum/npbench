@@ -69,5 +69,5 @@ def kernel(alpha, imgIn):
         'i': parir.threads(W),
         'j': parir.threads(H)
     }
-    parir_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H, parallelize=p)
+    parir_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H, opts=parir.parallelize(p))
     return imgOut

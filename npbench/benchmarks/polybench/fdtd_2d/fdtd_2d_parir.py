@@ -25,5 +25,5 @@ def kernel(TMAX, ex, ey, hz, _fict_):
         'i': parir.threads(NX-1),
         'j': parir.threads(1024),
     }
-    kernel_wrap(ex, ey, hz, _fict_, TMAX, parallelize=p)
+    kernel_wrap(ex, ey, hz, _fict_, TMAX, opts=parir.parallelize(p))
 

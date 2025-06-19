@@ -46,5 +46,5 @@ def arc_distance(theta_1, phi_1, theta_2, phi_2):
     N, = theta_1.shape
     distance_matrix = torch.empty_like(theta_1)
     p = {'i': parir.threads(N)}
-    kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N, parallelize=p)
+    kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N, opts=parir.parallelize(p))
     return distance_matrix

@@ -30,4 +30,4 @@ def kernel(alpha, beta, C, A, B):
         'N': parir.threads(N),
         'i_red': parir.threads(32).reduce()
     }
-    parir_kernel(alpha, beta, C, A, B, M, N, parallelize=p)
+    parir_kernel(alpha, beta, C, A, B, M, N, opts=parir.parallelize(p))

@@ -127,5 +127,8 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
         'N': parir.threads(N),
         'reduce': parir.threads(64).reduce()
     }
-    nbody_kernel(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, a, inv_r, tmp, parallelize=p)
+    nbody_kernel(
+        mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, a, inv_r, tmp,
+        opts=parir.parallelize(p)
+    )
     return KE.reshape(Nt+1), PE.reshape(Nt+1)

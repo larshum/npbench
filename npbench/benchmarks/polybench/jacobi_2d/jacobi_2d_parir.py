@@ -21,4 +21,4 @@ def kernel(TSTEPS, A, B):
         'i': parir.threads(N-1),
         'j': parir.threads(N-1),
     }
-    kernel_wrap(A, B, TSTEPS, parallelize=p)
+    kernel_wrap(A, B, TSTEPS, opts=parir.parallelize(p))

@@ -39,5 +39,5 @@ def azimint_naive(data, radius, npt):
         'ix': parir.threads(1024).reduce(),
         'j': parir.threads(1024).reduce()
     }
-    parir_kernel(data, radius, res, rmax, npt, N, parallelize=p)
+    parir_kernel(data, radius, res, rmax, npt, N, opts=parir.parallelize(p))
     return res

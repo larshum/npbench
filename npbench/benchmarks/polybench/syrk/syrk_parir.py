@@ -19,5 +19,5 @@ def kernel(alpha, beta, C, A):
         'i': parir.threads(N),
         'k': parir.threads(256).reduce()
     }
-    syrk(alpha, beta, C, A, N, M, parallelize=p)
+    syrk(alpha, beta, C, A, N, M, opts=parir.parallelize(p))
 

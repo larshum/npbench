@@ -25,7 +25,7 @@ def softmax(x):
         'i': parir.threads(N),
         'j': parir.threads(1024),
     }
-    softmax_kernel(x, out, N, M, parallelize=p)
+    softmax_kernel(x, out, N, M, opts=parir.parallelize(p))
     return out
 
 # 3-layer MLP

@@ -17,4 +17,4 @@ def kernel(alpha, A, B):
         'j': parir.threads(N),
         'k': parir.threads(256).reduce()
     }
-    trmm(alpha, A, B, M, N, parallelize=p)
+    trmm(alpha, A, B, M, N, opts=parir.parallelize(p))

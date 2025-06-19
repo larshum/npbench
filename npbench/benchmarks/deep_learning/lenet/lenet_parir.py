@@ -28,7 +28,7 @@ def conv2d(input, weights):
     C_out = weights.shape[3]
     output = torch.empty((N, H_out, W_out, C_out), dtype=torch.float32, device=weights.device)
     p = {'i': parir.threads(H_out), 'j': parir.threads(W_out)}
-    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, parallelize=p)
+    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parir.parallelize(p))
     return output
 
 
@@ -54,7 +54,7 @@ def maxpool2d(x):
         dtype=x.dtype, device=x.device)
     N_0, N_1, N_2, N_3 = output.shape
     p = {'i': parir.threads(N_1), 'j': parir.threads(N_2)}
-    maxpool2d_kernel(x, output, N_0, N_1, N_2, N_3, parallelize=p)
+    maxpool2d_kernel(x, output, N_0, N_1, N_2, N_3, opts=parir.parallelize(p))
     return output
 
 

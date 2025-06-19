@@ -17,5 +17,5 @@ def kernel(alpha, beta, C, A, B):
         'i': parir.threads(N),
         'k': parir.threads(256).reduce()
     }
-    kernel_wrap(alpha, beta, C, A, B, N, M, parallelize=p)
+    kernel_wrap(alpha, beta, C, A, B, N, M, opts=parir.parallelize(p))
 

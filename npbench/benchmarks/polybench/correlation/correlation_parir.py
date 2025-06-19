@@ -23,5 +23,5 @@ def kernel(M, float_n, data):
         'i': parir.threads(M-1),
         'j': parir.threads(256),
     }
-    parir_kernel(corr, data, M, parallelize=p)
+    parir_kernel(corr, data, M, opts=parir.parallelize(p))
     return corr
