@@ -11,8 +11,13 @@ function run_benchmarks {
 
   for f in ${FRAMEWORKS[@]}; do
     echo "Benchmarking framework $f"
+    if [ $f = $BASELINE ]; then
+      BASELINE_STR=""
+    else
+      BASELINE_STR="-x $BASELINE"
+    fi
     for b in ${BENCHMARKS[@]}; do
-      python run_benchmark.py -f $f -b $b -p $PRESET -x $BASELINE >> ${OUT}/$f.out 2>> ${OUT}/$f.err
+      python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
     done
   done
   python plot_results.py -p $PRESET -b $BASELINE
@@ -33,13 +38,14 @@ function bench_metal {
   # caused by the use of 32-bit floats.
   # - adi
   # - azimint_naive
-  # - compute
+  # - compute (OK for numpy32)
   # - durbin
   # - lu, ludcmp
-  # - mlp: uses too much memory for an 8 GB machine
+  # - mlp: uses too much memory for an 8 GB machine (OK for numpy32)
   # - nbody
+  # - scattering_self_energies
   # - vadv
-  export BENCHMARKS=("arc_distance" "cavity_flow" "channel_flow" "cholesky" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "fdtd_2d" "floyd_warshall" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_1d" "jacobi_2d" "lenet" "nussinov" "resnet" "scattering_self_energies" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm")
+  export BENCHMARKS=("arc_distance" "cavity_flow" "channel_flow" "cholesky" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "fdtd_2d" "floyd_warshall" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_1d" "jacobi_2d" "lenet" "nussinov" "resnet" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm")
   export PRESET=L
   export BASELINE=numpy32
   run_benchmarks
