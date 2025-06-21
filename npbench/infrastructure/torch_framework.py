@@ -45,6 +45,8 @@ class TorchFramework(Framework):
             def copy_func(t):
                 if t.dtype == np.float64:
                     t = t.astype(np.float32)
+                elif t.dtype == np.complex128:
+                    t = t.astype(np.complex64)
                 t = torch.tensor(t, device='mps')
                 torch.mps.synchronize()
                 return t

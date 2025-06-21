@@ -13,7 +13,7 @@ import torch
 
 def azimint_naive(data, radius, npt):
     rmax = radius.max()
-    res = torch.zeros(npt, dtype=torch.float64)
+    res = torch.zeros(npt, dtype=data.dtype)
     for i in range(npt):
         r1 = rmax * i / npt
         r2 = rmax * (i + 1) / npt

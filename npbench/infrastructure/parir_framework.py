@@ -50,6 +50,8 @@ class ParirFramework(Framework):
                 t = torch.tensor(t)
                 if t.dtype == torch.float64:
                     return t.to(torch.float32)
+                if t.dtype == torch.complex128:
+                    return t.to(torch.complex64)
                 return t
             return copy_parir
 

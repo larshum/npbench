@@ -2,7 +2,7 @@ import torch
 
 
 def kernel(alpha, imgIn):
-    alpha = torch.tensor(alpha, device=imgIn.device)
+    alpha = torch.tensor(alpha, dtype=imgIn.dtype)
 
     k = (1.0 - torch.exp(-alpha)) * (1.0 - torch.exp(-alpha)) / (
         1.0 + alpha * torch.exp(-alpha) - torch.exp(2.0 * alpha))

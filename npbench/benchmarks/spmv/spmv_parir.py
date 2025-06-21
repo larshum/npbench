@@ -14,8 +14,8 @@ def spmv_helper(A_row, A_col, A_val, N, x, y):
 # (CSR) format
 def spmv(A_row, A_col, A_val, x):
     N, = A_row.shape
-    A_row = A_row.to(dtype=torch.int64)
-    A_col = A_col.to(dtype=torch.int64)
+    A_row = A_row.to(dtype=torch.int32)
+    A_col = A_col.to(dtype=torch.int32)
     y = torch.zeros(N - 1, dtype=A_val.dtype)
     p = {
         'i': parir.threads(N-1),

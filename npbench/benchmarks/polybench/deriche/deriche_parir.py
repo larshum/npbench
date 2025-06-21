@@ -51,12 +51,12 @@ def kernel(alpha, imgIn):
     y1 = torch.empty_like(imgIn)
     y2 = torch.empty_like(imgIn)
     imgOut = torch.empty_like(imgIn)
-    alpha = torch.tensor(alpha, dtype=alpha.dtype)
+    alpha = torch.tensor(alpha, dtype=imgIn.dtype)
     W, H = imgIn.shape
     k = (1.0 - parir.exp(-alpha)) * (1.0 - parir.exp(-alpha)) / (
         1.0 + alpha * parir.exp(-alpha) - parir.exp(2.0 * alpha))
-    a = torch.empty(8, dtype=y1.dtype, device=y1.device)
-    b = torch.empty(2, dtype=y1.dtype, device=y1.device)
+    a = torch.empty(8, dtype=y1.dtype)
+    b = torch.empty(2, dtype=y1.dtype)
     c = torch.empty_like(b)
     a[0] = a[4] = k
     a[1] = a[5] = k * parir.exp(-alpha) * (alpha - 1.0)

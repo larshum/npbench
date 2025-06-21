@@ -87,8 +87,8 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     acc = getAcc(pos, mass, G, softening)
 
     # calculate initial energy of system
-    KE = torch.empty(Nt + 1, dtype=torch.float64)
-    PE = torch.empty(Nt + 1, dtype=torch.float64)
+    KE = torch.empty(Nt + 1, dtype=mass.dtype)
+    PE = torch.empty(Nt + 1, dtype=mass.dtype)
     KE[0], PE[0] = getEnergy(pos, vel, mass, G)
 
     t = 0.0
