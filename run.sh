@@ -12,9 +12,9 @@ function run_benchmarks {
   for f in ${FRAMEWORKS[@]}; do
     echo "Benchmarking framework $f"
     if [ $f = $BASELINE ]; then
-      BASELINE_STR=""
+      VALIDATION_STR=""
     else
-      BASELINE_STR="-x $BASELINE"
+      VALIDATION_STR="-x $VALIDATOR"
     fi
     for b in ${BENCHMARKS[@]}; do
       python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
@@ -28,6 +28,7 @@ function bench_cuda {
   export BENCHMARKS=("adi" "arc_distance" "azimint_naive" "cavity_flow" "channel_flow" "cholesky" "compute" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "durbin" "fdtd_2d" "floyd_warshall" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_1d" "jacobi_2d" "lenet" "lu" "ludcmp" "mlp" "nbody" "nussinov" "resnet" "scattering_self_energies" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm" "vadv")
   export PRESET=L
   export BASELINE=torch_cuda
+  export VALIDATOR=numpy
   run_benchmarks
 }
 
@@ -48,6 +49,7 @@ function bench_metal {
   export BENCHMARKS=("arc_distance" "cavity_flow" "channel_flow" "cholesky" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "fdtd_2d" "floyd_warshall" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_1d" "jacobi_2d" "lenet" "nussinov" "resnet" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm")
   export PRESET=L
   export BASELINE=numpy32
+  export VALIDATOR=numpy32
   run_benchmarks
 }
 
