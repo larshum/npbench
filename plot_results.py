@@ -129,6 +129,7 @@ data = pd.merge(left=bestgroup,
 data = data.drop(['mode', 'details'], axis=1).reset_index(drop=True)
 
 frmwrks = list(data['framework'].unique())
+frmwrks = sorted(frmwrks)
 assert (args["baseline"] in frmwrks)
 frmwrks.remove(args["baseline"])
 frmwrks.append(args["baseline"])
