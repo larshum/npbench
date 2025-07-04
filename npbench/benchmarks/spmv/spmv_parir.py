@@ -21,5 +21,5 @@ def spmv(A_row, A_col, A_val, x):
         'i': parir.threads(N-1),
         'j': parir.threads(64).reduce(),
     }
-    spmv_helper(A_row, A_col, A_val, N, x, y, opts=parir.parallelize(p))
+    spmv_helper(A_row, A_col, A_val, N, x, y, opts=parir.par(p))
     return y

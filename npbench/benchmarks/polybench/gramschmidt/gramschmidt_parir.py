@@ -31,5 +31,5 @@ def kernel(A):
         'i_reduce': parir.threads(128).reduce(),
         'j': parir.threads(N)
     }
-    parir_kernel(A, R, Q, M, N, opts=parir.parallelize(p))
+    parir_kernel(A, R, Q, M, N, opts=parir.par(p))
     return Q, R

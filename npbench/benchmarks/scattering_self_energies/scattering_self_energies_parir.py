@@ -72,5 +72,5 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
         neigh_idx, torch.view_as_real(dH), torch.view_as_real(G),
         torch.view_as_real(D), torch.view_as_real(Sigma),
         torch.view_as_real(dHG), torch.view_as_real(dHD),
-        Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, opts=parir.parallelize(p)
+        Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, opts=parir.par(p)
     )

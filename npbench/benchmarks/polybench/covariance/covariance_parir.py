@@ -21,5 +21,5 @@ def kernel(M, float_n, data):
         'i': parir.threads(M),
         'j': parir.threads(256),
     }
-    covariance_parir(cov, data, float_n, M, opts=parir.parallelize(p))
+    covariance_parir(cov, data, float_n, M, opts=parir.par(p))
     return cov

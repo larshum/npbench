@@ -15,4 +15,4 @@ def kernel(path):
         'i': parir.threads(N),
         'j': parir.threads(N)
     }
-    kernel_helper(path, N, opts=parir.parallelize(p))
+    kernel_helper(path, N, opts=parir.par(p))

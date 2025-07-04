@@ -31,5 +31,5 @@ def softmax(x):
         'k': parir.threads(SM),
         'l': parir.threads(256),
     }
-    softmax_wrap(x, out, N, H, SM, opts=parir.parallelize(p))
+    softmax_wrap(x, out, N, H, SM, opts=parir.par(p))
     return out

@@ -54,5 +54,5 @@ def hdiff(in_field, out_field, coeff):
     p = {'I': parir.threads(I), 'J': parir.threads(J), 'K': parir.threads(K)}
     hdiff_kernel(
         in_field, out_field, coeff, lap_field, res1, res2, flx_field, fly_field, I, J, K,
-        opts=parir.parallelize(p)
+        opts=parir.par(p)
     )

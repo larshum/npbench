@@ -20,5 +20,5 @@ def compute(array_1, array_2, a, b, c):
         'i': parir.threads(N),
         'j': parir.threads(1024)
     }
-    compute_helper(array_1, array_2, N, M, a, b, c, out, opts=parir.parallelize(p))
+    compute_helper(array_1, array_2, N, M, a, b, c, out, opts=parir.par(p))
     return out

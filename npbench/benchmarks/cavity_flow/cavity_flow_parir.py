@@ -108,5 +108,5 @@ def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
         par = {'ny': parir.threads(ny), 'nx': parir.threads(nx)}
         cavity_flow_kernel(
             nx, ny, nt, nit, u, un, v, vn, b, dt, dx, dy, p, pn, rho, nu,
-            opts=parir.parallelize(par)
+            opts=parir.par(par)
         )

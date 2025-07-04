@@ -21,5 +21,5 @@ def parir_kernel(table, seq, N):
 
 def kernel(N, seq):
     table = torch.zeros((N, N), dtype=torch.int32, device=seq.device)
-    parir_kernel(table, seq, N, opts=parir.parallelize({}))
+    parir_kernel(table, seq, N, opts=parir.par({}))
     return table

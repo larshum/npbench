@@ -21,5 +21,5 @@ def go_fast(a):
         'ix': parir.threads(N),
         'j': parir.threads(N)
     }
-    parir_kernel(a, tmp, out, N, opts=parir.parallelize(p))
+    parir_kernel(a, tmp, out, N, opts=parir.par(p))
     return out

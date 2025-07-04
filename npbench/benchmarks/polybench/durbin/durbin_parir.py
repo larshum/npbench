@@ -32,7 +32,7 @@ def kernel(r):
         'k_red': parir.threads(512).reduce(),
         'k': parir.threads(512)
     }
-    parir_kernel(r, y, temp, N, opts=parir.parallelize(p))
+    parir_kernel(r, y, temp, N, opts=parir.par(p))
     return y
 
     alpha = -r[0]

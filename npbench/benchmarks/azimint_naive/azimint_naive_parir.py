@@ -58,7 +58,7 @@ def azimint_naive(data, radius, npt):
         'ix': parir.threads(1024).reduce(),
         'j': parir.threads(1024).reduce()
     }
-    opts = parir.parallelize(p)
+    opts = parir.par(p)
     if data.dtype == torch.float32:
         parir_kernel_32bit(data, radius, res, rmax, npt, N, opts=opts)
     else:

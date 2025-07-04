@@ -59,5 +59,5 @@ def kernel(TSTEPS, N, u):
     b = e = torch.tensor(1.0 + mul2, dtype=u.dtype)
     d = f = torch.tensor(-mul2 / 2.0, dtype=u.dtype)
     par = { 'i': parir.threads(N-2) }
-    parir_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N, opts=parir.parallelize(par))
+    parir_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N, opts=parir.par(par))
     return u
