@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "prickle_metal",
+        "full_name": "Prickle Metal",
+        "prefix": "prickle",
+        "postfix": "prickle",
+        "class": "PrickleFramework",
+        "arch": "gpu"
+    }
+}

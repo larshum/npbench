@@ -12,6 +12,6 @@ from .numba_framework import *
 from .pythran_framework import *
 from .appy_framework import *
 from .jax_framework import *
-from .parir_framework import *
+from .prickle_framework import *
 from .torch_framework import *
 from .numpy32_framework import *
