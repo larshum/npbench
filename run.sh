@@ -3,23 +3,26 @@
 OUT="out"
 
 function run_benchmarks {
-  rm -f npbench.db
-  rm -f ${OUT}/*.out ${OUT}/*.err
-  mkdir -p ${OUT}
+  if [ -f npbench.db ]; then
+    echo "Found existing benchmark results - plotting immediately without running the suite"
+  else
+    rm -f ${OUT}/*.out ${OUT}/*.err
+    mkdir -p ${OUT}
 
-  echo "Running ${#BENCHMARKS[@]} benchmarks using ${#FRAMEWORKS[@]} frameworks (${FRAMEWORKS[@]})"
+    echo "Running ${#BENCHMARKS[@]} benchmarks using ${#FRAMEWORKS[@]} frameworks (${FRAMEWORKS[@]})"
 
-  for f in ${FRAMEWORKS[@]}; do
-    echo "Benchmarking framework $f"
-    if [ $f = $BASELINE ]; then
-      VALIDATION_STR=""
-    else
-      VALIDATION_STR="-x $VALIDATOR"
-    fi
-    for b in ${BENCHMARKS[@]}; do
-      python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
+    for f in ${FRAMEWORKS[@]}; do
+      echo "Benchmarking framework $f"
+      if [ $f = $BASELINE ]; then
+        VALIDATION_STR=""
+      else
+        VALIDATION_STR="-x $VALIDATOR"
+      fi
+      for b in ${BENCHMARKS[@]}; do
+        python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
+      done
     done
-  done
+  fi
   python plot_results.py -p $PRESET -b $BASELINE
 }
 
