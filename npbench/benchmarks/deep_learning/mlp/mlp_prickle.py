@@ -3,7 +3,7 @@ import torch
 
 
 def relu(x):
-    return torch.maximum(x, torch.empty_like(x))
+    return torch.maximum(x, torch.zeros_like(x))
 
 @prickle.jit
 def softmax_kernel(x, out, N, M):

@@ -44,12 +44,12 @@ function bench_metal {
   # - azimint_naive
   # - compute (OK for numpy32)
   # - durbin
+  # - jacobi_1d
   # - lu, ludcmp
-  # - mlp: uses too much memory for an 8 GB machine (OK for numpy32)
   # - nbody
   # - scattering_self_energies
   # - vadv
-  export BENCHMARKS=("arc_distance" "cavity_flow" "channel_flow" "cholesky" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "fdtd_2d" "floyd_warshall" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_1d" "jacobi_2d" "lenet" "nussinov" "resnet" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm")
+  export BENCHMARKS=("arc_distance" "cavity_flow" "channel_flow" "cholesky" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "fdtd_2d" "floyd_warshall" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_2d" "lenet" "mlp" "nussinov" "resnet" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm")
   export PRESET=L
   export BASELINE=numpy32
   export VALIDATOR=numpy32
