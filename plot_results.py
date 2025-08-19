@@ -226,14 +226,8 @@ im = ax1.imshow(hm_data.to_numpy(),
 ticks = ax1.set_xticks(np.arange(len(hm_data.columns)))
 ticks = ax1.set_yticks(np.arange(len(best_wide['benchmark'])))
 # ... and label them with the respective list entries
-ticks = ax1.set_xticklabels(hm_data.columns)
+ticks = ax1.set_xticklabels([f"({i+1})" for i, _ in enumerate(hm_data.columns)])
 ticks = ax1.set_yticklabels(best_wide['benchmark'])
-
-# Rotate the tick labels and set their alignment.
-plt.setp(ax1.get_xticklabels(),
-         rotation=90,
-         ha="right",
-         rotation_mode="anchor")
 
 for i in range(len(best_wide['benchmark'])):
     # annotate with improvement over baseline
@@ -301,8 +295,6 @@ for i in range(len(best_wide['benchmark'])):
                             color="black",
                             fontsize=8)
 
-ax1.set_ylabel("Benchmarks", labelpad=0)
-
 plt.tight_layout()
-plt.savefig("heatmap.pdf", dpi=600)
+plt.savefig("heatmap.pdf", bbox_inches="tight", pad_inches=0.05, dpi=600)
 plt.show()

@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "jax32",
+        "full_name": "Jax (32-bit)",
+        "prefix": "jax",
+        "postfix": "jax",
+        "class": "Jax32Framework",
+        "arch": "cpu"
+    }
+}

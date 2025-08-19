@@ -140,7 +140,7 @@ def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None
     ms_time = time_to_ms(raw_time)
     if verbose:
         print("{}: {}ms".format(out_text, ms_time))
-    
+
     if output is not None:
         exec(setup, context)
         exec(stmt, context)
@@ -169,6 +169,12 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
             import cupy
             if isinstance(v, cupy.ndarray):
                 v = cupy.asnumpy(v)
+        except:
+            pass
+        try:
+            import jax.numpy as jnp
+            if isinstance(r, np.ndarray):
+                r = r.astype(v.dtype)
         except:
             pass
 

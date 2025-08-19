@@ -24,12 +24,14 @@ class Numpy32Framework(Framework):
         return {'numpy': numpy}
 
     def copy_func(self) -> Callable:
-        """ Returns the copy-method that should be used 
+        """ Returns the copy-method that should be used
         for copying the benchmark arguments. """
 
         import numpy as np
         def copy_numpy(t):
             if t.dtype == np.float64:
                 return t.astype(np.float32)
+            elif t.dtype == np.complex128:
+                return t.astype(np.complex64)
             return t
         return copy_numpy
