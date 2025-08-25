@@ -1,6 +1,4 @@
 import prickle
-import torch
-
 
 @prickle.jit
 def prickle_kernel(r, y, temp, N):
@@ -25,8 +23,8 @@ def prickle_kernel(r, y, temp, N):
 
 
 def kernel(r):
-    y = torch.empty_like(r)
-    temp = torch.empty_like(y)
+    y = prickle.buffer.empty_like(r)
+    temp = prickle.buffer.empty_like(y)
     N, = r.shape
     p = {
         'k_red': prickle.threads(512).reduce(),

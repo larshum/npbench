@@ -1,6 +1,4 @@
 import prickle
-import torch
-
 
 @prickle.jit
 def prickle_kernel(TSTEPS, N, A):

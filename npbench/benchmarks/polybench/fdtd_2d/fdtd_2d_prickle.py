@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 @prickle.jit
 def kernel_wrap(ex, ey, hz, _fict_, TMAX):

@@ -1,5 +1,5 @@
+import numpy as np
 import prickle
-import torch
 
 @prickle.jit
 def prickle_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):
@@ -48,16 +48,16 @@ def prickle_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):
     imgOut[:, :] = c[1] * (y1[:, :] + y2[:, :])
 
 def kernel(alpha, imgIn):
-    y1 = torch.empty_like(imgIn)
-    y2 = torch.empty_like(imgIn)
-    imgOut = torch.empty_like(imgIn)
-    alpha = torch.tensor(alpha, dtype=imgIn.dtype)
+    y1 = prickle.buffer.empty_like(imgIn)
+    y2 = prickle.buffer.empty_like(imgIn)
+    imgOut = prickle.buffer.empty_like(imgIn)
+    alpha = imgIn.dtype.to_numpy()(alpha)
     W, H = imgIn.shape
     k = (1.0 - prickle.exp(-alpha)) * (1.0 - prickle.exp(-alpha)) / (
         1.0 + alpha * prickle.exp(-alpha) - prickle.exp(2.0 * alpha))
-    a = torch.empty(8, dtype=y1.dtype)
-    b = torch.empty(2, dtype=y1.dtype)
-    c = torch.empty_like(b)
+    a = np.empty(8, dtype=y1.dtype.to_numpy())
+    b = np.empty(2, dtype=y1.dtype.to_numpy())
+    c = np.empty_like(b)
     a[0] = a[4] = k
     a[1] = a[5] = k * prickle.exp(-alpha) * (alpha - 1.0)
     a[2] = a[6] = k * prickle.exp(-alpha) * (alpha + 1.0)

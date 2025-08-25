@@ -106,21 +106,23 @@ def nbody_kernel(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, ac
 
 def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     # Convert to Center-of-Mass frame
-    vel -= torch.mean(mass * vel, axis=0) / torch.mean(mass)
+    mass_t = mass.torch_ref()
+    vel_t = vel.torch_ref()
+    vel_t -= torch.mean(mass_t * vel_t, axis=0) / torch.mean(mass_t)
 
     # Allocate temporary data used within the megakernel
     N,_ = pos.shape
     # NOTE: We add a dummy dimension to KE and PE to ensure they are passed as
     # tensors to the underlying kernels, so that we can modify individual
     # elements within kernels.
-    KE = torch.empty((Nt + 1, 1), dtype=pos.dtype, device=pos.device)
-    PE = torch.empty_like(KE)
-    a = torch.empty((N, 3), dtype=pos.dtype, device=pos.device)
-    dx = torch.empty((N, N), dtype=pos.dtype, device=pos.device)
-    dy = torch.empty_like(dx)
-    dz = torch.empty_like(dx)
-    inv_r = torch.empty_like(dx)
-    tmp = torch.empty_like(dx)
+    KE = prickle.buffer.empty((Nt+1, 1), pos.dtype, pos.backend)
+    PE = prickle.buffer.empty_like(KE)
+    a = prickle.buffer.empty((N, 3), pos.dtype, pos.backend)
+    dx = prickle.buffer.empty((N, N), pos.dtype, pos.backend)
+    dy = prickle.buffer.empty_like(dx)
+    dz = prickle.buffer.empty_like(dx)
+    inv_r = prickle.buffer.empty_like(dx)
+    tmp = prickle.buffer.empty_like(dx)
 
     p = {
         'N2': prickle.threads(N*N),
@@ -131,4 +133,4 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
         mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, a, inv_r, tmp,
         opts=prickle.par(p)
     )
-    return KE.reshape(Nt+1), PE.reshape(Nt+1)
+    return KE.reshape((Nt+1,)), PE.reshape((Nt+1,))

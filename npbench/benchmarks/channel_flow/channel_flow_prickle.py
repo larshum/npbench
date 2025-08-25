@@ -7,8 +7,8 @@
 # All content is under Creative Commons Attribution CC-BY 4.0,
 # and all code is under BSD-3 clause (previously under MIT, and changed on March 8, 2018).
 
+import numpy as np
 import prickle
-import torch
 
 
 @prickle.jit
@@ -163,24 +163,25 @@ def channel_flow_kernel(nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b):
     prickle.label('nx')
     v[-1, :] = 0.0
 
-
 def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
     udiff = 1
     stepcount = 0
 
     ny, nx = u.shape
     while udiff > .001:
-        un = u.detach().clone()
-        vn = v.detach().clone()
-        pn = torch.empty_like(p)
-        b = torch.zeros_like(u)
+        un = u.clone()
+        vn = v.clone()
+        pn = prickle.buffer.empty_like(p)
+        b = prickle.buffer.zeros_like(u)
 
         par = {'ny': prickle.threads(ny), 'nx': prickle.threads(nx)}
         channel_flow_kernel(
             nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b,
             opts=prickle.par(par)
         )
-        udiff = (torch.sum(u) - torch.sum(un)) / torch.sum(u)
+        usum = np.sum(u.numpy())
+        unsum = np.sum(un.numpy())
+        udiff = (usum - unsum) / usum
         stepcount += 1
 
     return stepcount

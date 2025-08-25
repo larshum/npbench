@@ -13,10 +13,11 @@ def covariance_prickle(cov, data, float_n, M):
             cov[j, i] = cov[i, j]
 
 def kernel(M, float_n, data):
-    float_n = torch.tensor(float(float_n), dtype=data.dtype, device=data.device)
-    mean = torch.mean(data, axis=0)
-    data -= mean
-    cov = torch.zeros((M, M), dtype=data.dtype, device=data.device)
+    data_t = data.torch_ref()
+    float_n = torch.tensor(float(float_n), dtype=data_t.dtype, device=data_t.device)
+    mean = torch.mean(data_t, axis=0)
+    data_t -= mean
+    cov = prickle.buffer.zeros((M, M), data.dtype, data.backend)
     p = {
         'i': prickle.threads(M),
         'j': prickle.threads(256),

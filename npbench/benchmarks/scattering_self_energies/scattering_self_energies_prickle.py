@@ -1,7 +1,6 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 
 import prickle
-import torch
 
 @prickle.jit
 def scattering_self_energies_kernel(neigh_idx, dH, G, D, Sigma, dHG, dHD, Nkz,
@@ -58,19 +57,17 @@ def scattering_self_energies_kernel(neigh_idx, dH, G, D, Sigma, dHG, dHD, Nkz,
 
 def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
     NA, NB = neigh_idx.shape
-    Nkz, NE, NA, Norb, Norb = G.shape
-    Nqz, Nw, NA, NB, N3D, N3D = D.shape
+    Nkz, NE, NA, Norb, Norb, _ = G.shape
+    Nqz, Nw, NA, NB, N3D, N3D, _ = D.shape
     p = {
         'Nkz': prickle.threads(Nkz),
         'NE': prickle.threads(NE),
         'NA': prickle.threads(NA),
         'threads': prickle.threads(32)
     }
-    dHG = torch.zeros(Nkz, NE, NA, Norb, Norb, dtype=G.dtype, device=G.device)
-    dHD = torch.zeros_like(dHG)
+    dHG = prickle.buffer.zeros((Nkz, NE, NA, Norb, Norb, 2), G.dtype, G.backend)
+    dHD = prickle.buffer.zeros_like(dHG)
     scattering_self_energies_kernel(
-        neigh_idx, torch.view_as_real(dH), torch.view_as_real(G),
-        torch.view_as_real(D), torch.view_as_real(Sigma),
-        torch.view_as_real(dHG), torch.view_as_real(dHD),
-        Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, opts=prickle.par(p)
+        neigh_idx, dH, G, D, Sigma, dHG, dHD, Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb,
+        opts=prickle.par(p)
     )

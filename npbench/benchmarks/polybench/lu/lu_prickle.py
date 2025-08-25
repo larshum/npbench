@@ -1,6 +1,4 @@
 import prickle
-import torch
-
 
 @prickle.jit
 def lu_prickle(A, N):

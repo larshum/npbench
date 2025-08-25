@@ -1,13 +1,11 @@
 import prickle
-import torch
-
 
 @prickle.jit
 def crc16_kernel(data, poly, N, out):
     with prickle.gpu:
-        crc = prickle.int32(0xFFFF)
+        crc = 0xFFFF
         for j in range(N):
-            b = data[j]
+            b = prickle.int32(data[j])
             cur_byte = 0xFF & b
             for _ in range(8):
                 if (crc & 0x0001) ^ (cur_byte & 0x0001):
@@ -20,8 +18,7 @@ def crc16_kernel(data, poly, N, out):
         out[0] = crc & 0xFFFF
 
 def crc16(data, poly=0x8408):
-    data = data.to(dtype=torch.int32)
     N, = data.shape
-    out = torch.empty(1, dtype=torch.int32)
+    out = prickle.buffer.empty((1,), prickle.buffer.DataType("<i4"), data.backend)
     crc16_kernel(data, poly, N, out, opts=prickle.par({}))
-    return int(out[0])
+    return int(out.numpy()[0])

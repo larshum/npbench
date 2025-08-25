@@ -1,5 +1,5 @@
+import numpy as np
 import prickle
-import torch
 
 @prickle.jit
 def syrk(alpha, beta, C, A, N, M):
@@ -12,8 +12,8 @@ def syrk(alpha, beta, C, A, N, M):
                 C[i,j] += alpha[0] * A[i,k] * A[j,k]
 
 def kernel(alpha, beta, C, A):
-    alpha = torch.tensor([alpha], dtype=A.dtype)
-    beta = torch.tensor([beta], dtype=A.dtype)
+    alpha = np.array([alpha], dtype=A.dtype.to_numpy())
+    beta = np.array([beta], dtype=A.dtype.to_numpy())
     N, M = A.shape
     p = {
         'i': prickle.threads(N),

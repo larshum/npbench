@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 @prickle.jit
 def trmm(alpha, A, B, M, N):

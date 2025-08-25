@@ -8,8 +8,8 @@
 # high performance azimuthal integration on gpu, 2014. In Proceedings of the
 # 7th European Conference on Python in Science (EuroSciPy 2014).
 
+import numpy as np
 import prickle
-import torch
 
 @prickle.jit
 def prickle_kernel_32bit(data, radius, res, rmax, npt, N):
@@ -51,15 +51,15 @@ def prickle_kernel(data, radius, res, rmax, npt, N):
 
 def azimint_naive(data, radius, npt):
     N, = data.shape
-    rmax = torch.empty((1,), dtype=data.dtype, device=data.device)
-    res = torch.zeros(npt, dtype=data.dtype, device=data.device)
+    rmax = prickle.buffer.empty((1,), data.dtype, data.backend)
+    res = prickle.buffer.zeros((npt,), data.dtype, data.backend)
     p = {
         'i': prickle.threads(npt),
         'ix': prickle.threads(1024).reduce(),
         'j': prickle.threads(1024).reduce()
     }
     opts = prickle.par(p)
-    if data.dtype == torch.float32:
+    if data.dtype.to_numpy() == np.float32:
         prickle_kernel_32bit(data, radius, res, rmax, npt, N, opts=opts)
     else:
         prickle_kernel(data, radius, res, rmax, npt, N, opts=opts)

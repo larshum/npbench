@@ -1,6 +1,4 @@
 import prickle
-import torch
-
 
 @prickle.jit
 def hdiff_kernel(in_field, out_field, coeff, lap_field, res1, res2, flx_field, fly_field, I, J, K):
@@ -46,11 +44,11 @@ def hdiff_kernel(in_field, out_field, coeff, lap_field, res1, res2, flx_field, f
 # Adapted from https://github.com/GridTools/gt4py/blob/1caca893034a18d5df1522ed251486659f846589/tests/test_integration/stencil_definitions.py#L194
 def hdiff(in_field, out_field, coeff):
     I, J, K = out_field.shape[0], out_field.shape[1], out_field.shape[2]
-    lap_field = torch.empty(I+2,J+2,K, dtype=in_field.dtype, device=in_field.device)
-    res1 = torch.empty(I+1,J,K, dtype=in_field.dtype, device=in_field.device)
-    res2 = torch.empty(I,J+1,K, dtype=in_field.dtype, device=in_field.device)
-    flx_field = torch.empty(I+1,J,K, dtype=in_field.dtype, device=in_field.device)
-    fly_field = torch.empty(I,J+1,K, dtype=in_field.dtype, device=in_field.device)
+    lap_field = prickle.buffer.empty((I+2,J+2,K), in_field.dtype, in_field.backend)
+    res1 = prickle.buffer.empty((I+1,J,K), in_field.dtype, in_field.backend)
+    res2 = prickle.buffer.empty((I,J+1,K), in_field.dtype, in_field.backend)
+    flx_field = prickle.buffer.empty((I+1,J,K), in_field.dtype, in_field.backend)
+    fly_field = prickle.buffer.empty((I,J+1,K), in_field.dtype, in_field.backend)
     p = {'I': prickle.threads(I), 'J': prickle.threads(J), 'K': prickle.threads(K)}
     hdiff_kernel(
         in_field, out_field, coeff, lap_field, res1, res2, flx_field, fly_field, I, J, K,

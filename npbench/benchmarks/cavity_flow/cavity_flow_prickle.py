@@ -8,8 +8,6 @@
 # and all code is under BSD-3 clause (previously under MIT, and changed on March 8, 2018).
 
 import prickle
-import torch
-
 
 @prickle.jit
 def build_up_b(b, rho, dt, u, v, dx, dy):
@@ -96,14 +94,14 @@ def cavity_flow_kernel(nx, ny, nt, nit, u, un, v, vn, b, dt, dx, dy, p, pn, rho,
     v[:, -1] = 0.0
 
 def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
-    un = torch.empty_like(u)
-    vn = torch.empty_like(v)
-    b = torch.zeros((ny, nx), device=u.device)
+    un = prickle.buffer.empty_like(u)
+    vn = prickle.buffer.empty_like(v)
+    b = prickle.buffer.zeros((ny, nx), u.dtype, u.backend)
 
     for n in range(nt):
-        un = u.detach().clone()
-        vn = v.detach().clone()
-        pn = p.detach().clone()
+        un = u.clone()
+        vn = v.clone()
+        pn = p.clone()
 
         par = {'ny': prickle.threads(ny), 'nx': prickle.threads(nx)}
         cavity_flow_kernel(

@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 @prickle.jit
 def kernel_wrap(A, B, TSTEPS):

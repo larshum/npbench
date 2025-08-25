@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 @prickle.jit
 def prickle_kernel(table, seq, N):
@@ -20,6 +19,6 @@ def prickle_kernel(table, seq, N):
                     table[i,j] = prickle.max(table[i,j], table[i,k] + table[k+1,j])
 
 def kernel(N, seq):
-    table = torch.zeros((N, N), dtype=torch.int32, device=seq.device)
+    table = prickle.buffer.zeros((N, N), prickle.buffer.DataType("<i4"), seq.backend)
     prickle_kernel(table, seq, N, opts=prickle.par({}))
     return table

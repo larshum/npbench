@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import prickle
-import torch
 
 @prickle.jit
 def kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N):
@@ -44,7 +43,7 @@ def arc_distance(theta_1, phi_1, theta_2, phi_2):
     Calculates the pairwise arc distance between all points in vector a and b.
     """
     N, = theta_1.shape
-    distance_matrix = torch.empty_like(theta_1)
+    distance_matrix = prickle.buffer.empty_like(theta_1)
     p = {'i': prickle.threads(N)}
     kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N, opts=prickle.par(p))
     return distance_matrix

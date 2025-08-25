@@ -173,8 +173,26 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
             pass
         try:
             import jax.numpy as jnp
-            if isinstance(r, np.ndarray):
-                r = r.astype(v.dtype)
+            if isinstance(v, jnp.ndarray):
+                v = v.asnumpy()
+        except:
+            pass
+        try:
+            import prickle
+            if isinstance(v, prickle.buffer.Buffer):
+                t = v.numpy()
+                # Ensure the result is represented in the expected format for
+                # complex numbers. Required due to the special treatment used
+                # in Prickle buffers.
+                if r.dtype == np.complex64 or r.dtype == np.complex128:
+                    t = t.flatten()
+                    r = r.flatten()
+                    if t.dtype == np.float32:
+                        v = t.view(np.complex64)
+                    else:
+                        v = t.view(np.complex128)
+                else:
+                    v = t
         except:
             pass
 

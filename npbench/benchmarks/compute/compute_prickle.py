@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 @prickle.jit
 def compute_helper(array_1, array_2, N, M, a, b, c, out):
@@ -11,10 +10,7 @@ def compute_helper(array_1, array_2, N, M, a, b, c, out):
             out[i,j] = clamped * a + array_2[i,j] * b + c
 
 def compute(array_1, array_2, a, b, c):
-    a = torch.tensor(a)
-    b = torch.tensor(b)
-    c = torch.tensor(c)
-    out = torch.zeros_like(array_1)
+    out = prickle.buffer.zeros_like(array_1)
     N, M = array_1.shape
     p = {
         'i': prickle.threads(N),

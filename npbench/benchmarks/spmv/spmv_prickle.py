@@ -1,6 +1,5 @@
 # Sparse Matrix-Vector Multiplication (SpMV)
 import prickle
-import torch
 
 @prickle.jit
 def spmv_helper(A_row, A_col, A_val, N, x, y):
@@ -14,9 +13,10 @@ def spmv_helper(A_row, A_col, A_val, N, x, y):
 # (CSR) format
 def spmv(A_row, A_col, A_val, x):
     N, = A_row.shape
-    A_row = A_row.to(dtype=torch.int32)
-    A_col = A_col.to(dtype=torch.int32)
-    y = torch.zeros(N - 1, dtype=A_val.dtype)
+    i32 = prickle.buffer.DataType("<i4")
+    A_row = A_row.with_type(i32)
+    A_col = A_col.with_type(i32)
+    y = prickle.buffer.zeros((N - 1,), A_val.dtype, A_val.backend)
     p = {
         'i': prickle.threads(N-1),
         'j': prickle.threads(64).reduce(),

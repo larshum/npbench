@@ -1,7 +1,7 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 
+import numpy as np
 import prickle
-import torch
 
 @prickle.jit
 def prickle_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N):
@@ -44,9 +44,9 @@ def prickle_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N):
                 u[i,j] = p[i,j] * u[i,j+1] + q[i,j]
 
 def kernel(TSTEPS, N, u):
-    v = torch.empty_like(u)
-    p = torch.empty_like(u)
-    q = torch.empty_like(u)
+    v = prickle.buffer.empty_like(u)
+    p = prickle.buffer.empty_like(u)
+    q = prickle.buffer.empty_like(u)
     DX = 1.0 / N
     DY = 1.0 / N
     DT = 1.0 / TSTEPS
@@ -55,9 +55,10 @@ def kernel(TSTEPS, N, u):
     mul1 = B1 * DT / (DX * DX)
     mul2 = B2 * DT / (DY * DY)
 
-    a = c = torch.tensor(-mul1 / 2.0, dtype=u.dtype)
-    b = e = torch.tensor(1.0 + mul2, dtype=u.dtype)
-    d = f = torch.tensor(-mul2 / 2.0, dtype=u.dtype)
+    dt = u.dtype.to_numpy()
+    a = c = dt(-mul1 / 2.0)
+    b = e = dt(1.0 + mul2)
+    d = f = dt(-mul2 / 2.0)
     par = { 'i': prickle.threads(N-2) }
     prickle_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N, opts=prickle.par(par))
     return u

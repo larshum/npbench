@@ -1,9 +1,8 @@
+import numpy as np
 import prickle
-import torch
-
 
 def relu(x):
-    return torch.maximum(x, torch.zeros_like(x))
+    return np.maximum(x, 0)
 
 @prickle.jit
 def softmax_kernel(x, out, N, M):
@@ -18,9 +17,10 @@ def softmax_kernel(x, out, N, M):
         prickle.label('j')
         out[i,:] /= s
 
-def softmax(x):
+def softmax(x, backend):
     N, M = x.shape
-    out = torch.empty_like(x)
+    x = prickle.buffer.Buffer.from_array(x, backend)
+    out = prickle.buffer.empty_like(x)
     p = {
         'i': prickle.threads(N),
         'j': prickle.threads(1024),
@@ -30,7 +30,8 @@ def softmax(x):
 
 # 3-layer MLP
 def mlp(input, w1, b1, w2, b2, w3, b3):
-    x = relu(input @ w1 + b1)
-    x = relu(x @ w2 + b2)
-    x = softmax(x @ w3 + b3)  # Softmax call can be omitted if necessary
+    backend = input.backend
+    x = relu(input.numpy() @ w1.numpy() + b1.numpy())
+    x = relu(x @ w2.numpy() + b2.numpy())
+    x = softmax(x @ w3.numpy() + b3.numpy(), backend)  # Softmax call can be omitted if necessary
     return x

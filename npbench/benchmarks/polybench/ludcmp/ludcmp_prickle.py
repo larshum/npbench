@@ -1,6 +1,4 @@
 import prickle
-import torch
-
 
 @prickle.jit
 def ludcmp_kernel(A, b, x, y, N):
@@ -34,8 +32,8 @@ def ludcmp_kernel(A, b, x, y, N):
 
 def kernel(A, b):
     N, N = A.shape
-    x = torch.zeros_like(b)
-    y = torch.zeros_like(b)
+    x = prickle.buffer.zeros_like(b)
+    y = prickle.buffer.zeros_like(b)
     p = {'k': prickle.threads(128).reduce()}
     ludcmp_kernel(A, b, x, y, N, opts=prickle.par(p))
     return x, y

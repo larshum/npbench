@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 # Sample constants
 BET_M = 0.5
@@ -101,20 +100,20 @@ def vadv_prickle(
 # Adapted from https://github.com/GridTools/gt4py/blob/1caca893034a18d5df1522ed251486659f846589/tests/test_integration/stencil_definitions.py#L111
 def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     I, J, K = utens_stage.shape[0], utens_stage.shape[1], utens_stage.shape[2]
-    ccol = torch.empty((I, J, K), dtype=utens_stage.dtype, device=utens_stage.device)
-    dcol = torch.empty((I, J, K), dtype=utens_stage.dtype, device=utens_stage.device)
-    data_col = torch.empty((I, J), dtype=utens_stage.dtype, device=utens_stage.device)
+    ccol = prickle.buffer.empty((I, J, K), utens_stage.dtype, utens_stage.backend)
+    dcol = prickle.buffer.empty((I, J, K), utens_stage.dtype, utens_stage.backend)
+    data_col = prickle.buffer.empty((I, J), utens_stage.dtype, utens_stage.backend)
 
     # Extra allocations
-    gav = torch.empty_like(data_col)
-    gcv = torch.empty_like(gav)
-    as_ = torch.empty_like(gav)
-    cs = torch.empty_like(gav)
-    acol = torch.empty_like(gav)
-    bcol = torch.empty_like(gav)
-    correction_term = torch.empty_like(gav)
-    divided = torch.empty_like(gav)
-    datacol = torch.empty_like(gav)
+    gav = prickle.buffer.empty_like(data_col)
+    gcv = prickle.buffer.empty_like(gav)
+    as_ = prickle.buffer.empty_like(gav)
+    cs = prickle.buffer.empty_like(gav)
+    acol = prickle.buffer.empty_like(gav)
+    bcol = prickle.buffer.empty_like(gav)
+    correction_term = prickle.buffer.empty_like(gav)
+    divided = prickle.buffer.empty_like(gav)
+    datacol = prickle.buffer.empty_like(gav)
 
     p = {'I': prickle.threads(I), 'J': prickle.threads(J)}
     vadv_prickle(

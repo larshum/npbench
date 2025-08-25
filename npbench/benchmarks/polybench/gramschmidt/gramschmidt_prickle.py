@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 @prickle.jit
 def prickle_kernel(A, R, Q, M, N):
@@ -21,10 +20,8 @@ def prickle_kernel(A, R, Q, M, N):
             A[:,j] -= Q[:,k] * R[k,j]
 
 def kernel(A):
-
-    Q = torch.zeros_like(A)
-    R = torch.zeros((A.shape[1], A.shape[1]), dtype=A.dtype, device=A.device)
-
+    Q = prickle.buffer.zeros_like(A)
+    R = prickle.buffer.zeros((A.shape[1], A.shape[1]), A.dtype, A.backend)
     M, N = A.shape
     p = {
         'i': prickle.threads(M),

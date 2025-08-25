@@ -1,5 +1,4 @@
 import prickle
-import torch
 
 @prickle.jit
 def softmax_wrap(x, out, N, H, SM):
@@ -24,7 +23,7 @@ def softmax_wrap(x, out, N, H, SM):
 # Numerically-stable version of softmax
 def softmax(x):
     N, H, SM, SM = x.shape
-    out = torch.zeros_like(x)
+    out = prickle.buffer.zeros_like(x)
     p = {
         'i': prickle.threads(N),
         'j': prickle.threads(H),
