@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "parpy_metal",
+        "full_name": "ParPy Metal",
+        "prefix": "parpy",
+        "postfix": "parpy",
+        "class": "ParPyFramework",
+        "arch": "gpu"
+    }
+}

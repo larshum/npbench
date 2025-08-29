@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "parpy_cuda",
+        "full_name": "ParPy CUDA",
+        "prefix": "parpy",
+        "postfix": "parpy",
+        "class": "ParPyFramework",
+        "arch": "gpu"
+    }
+}

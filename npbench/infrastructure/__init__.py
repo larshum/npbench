@@ -13,6 +13,6 @@ from .pythran_framework import *
 from .appy_framework import *
 from .jax_framework import *
 from .jax32_framework import *
-from .prickle_framework import *
+from .parpy_framework import *
 from .torch_framework import *
 from .numpy32_framework import *
