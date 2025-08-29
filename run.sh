@@ -19,8 +19,7 @@ function run_benchmarks {
         VALIDATION_STR="-x $VALIDATOR"
       fi
       for b in ${BENCHMARKS[@]}; do
-        python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR}
-        #timeout 30m python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
+        timeout 30m python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
       done
     done
   fi
@@ -28,8 +27,7 @@ function run_benchmarks {
 }
 
 function bench_cuda {
-  export FRAMEWORKS=("parpy_cuda")
-  #export FRAMEWORKS=("cupy" "dace_gpu" "jax" "parpy_cuda" "torch_cuda")
+  export FRAMEWORKS=("cupy" "dace_gpu" "jax" "parpy_cuda" "torch_cuda")
   export BENCHMARKS=("adi" "arc_distance" "azimint_naive" "cavity_flow" "channel_flow" "cholesky" "compute" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "durbin" "fdtd_2d" "floyd_warshall" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_1d" "jacobi_2d" "lenet" "lu" "ludcmp" "mlp" "nbody" "nussinov" "resnet" "scattering_self_energies" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm" "vadv")
   export PRESET=L
   export BASELINE=torch_cuda
