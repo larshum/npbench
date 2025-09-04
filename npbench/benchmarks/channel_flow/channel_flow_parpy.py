@@ -78,7 +78,15 @@ def pressure_poisson_periodic(nit, p, dx, dy, b, pn):
 
 
 @parpy.jit
-def channel_flow_kernel(nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b):
+def channel_flow_kernel(nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b, udiff):
+    # Copy u -> un and v -> vn
+    parpy.label('ny')
+    parpy.label('nx')
+    un[:,:] = u[:,:]
+    parpy.label('ny')
+    parpy.label('nx')
+    vn[:,:] = v[:,:]
+
     build_up_b(rho, dt, dx, dy, u, v, b)
     pressure_poisson_periodic(nit, p, dx, dy, b, pn)
 
@@ -163,24 +171,36 @@ def channel_flow_kernel(nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b):
     parpy.label('nx')
     v[-1, :] = 0.0
 
+    # Compute udiff = (sum(u) - sum(un)) / sum(u)
+    parpy.label('reduce')
+    udiff[1] = parpy.operators.sum(u[:,:])
+    parpy.label('reduce')
+    udiff[2] = parpy.operators.sum(un[:,:])
+    with parpy.gpu:
+        udiff[0] = (udiff[1] - udiff[2]) / udiff[1]
 
 def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
+    un = parpy.buffer.empty_like(u)
+    vn = parpy.buffer.empty_like(v)
+    pn = parpy.buffer.empty_like(p)
+    b = parpy.buffer.zeros_like(u)
+    udiff_tmp = parpy.buffer.empty((3,), u.dtype, u.backend)
+
     udiff = 1
     stepcount = 0
 
     ny, nx = u.shape
     while udiff > .001:
-        un = u.detach().clone()
-        vn = v.detach().clone()
-        pn = torch.empty_like(p)
-        b = torch.zeros_like(u)
-
-        par = {'ny': parpy.threads(ny), 'nx': parpy.threads(nx)}
+        par = {
+            'ny': parpy.threads(ny),
+            'nx': parpy.threads(nx),
+            'reduce': parpy.threads(1024),
+        }
         channel_flow_kernel(
-            nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b,
+            nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b, udiff_tmp,
             opts=parpy.par(par)
         )
-        udiff = (torch.sum(u) - torch.sum(un)) / torch.sum(u)
+        udiff = udiff_tmp.numpy()[0]
         stepcount += 1
 
     return stepcount

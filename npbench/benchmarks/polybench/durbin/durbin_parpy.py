@@ -1,6 +1,4 @@
 import parpy
-import torch
-
 
 @parpy.jit
 def parpy_kernel(r, y, temp, N):
@@ -23,10 +21,9 @@ def parpy_kernel(r, y, temp, N):
                 y[i] += temp[i]
             y[k] = alpha
 
-
 def kernel(r):
-    y = torch.empty_like(r)
-    temp = torch.empty_like(y)
+    y = parpy.buffer.empty_like(r)
+    temp = parpy.buffer.empty_like(y)
     N, = r.shape
     p = {
         'k_red': parpy.threads(512).reduce(),

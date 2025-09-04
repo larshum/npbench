@@ -2,7 +2,6 @@ import parpy
 from parpy.operators import sum
 import torch
 
-
 @parpy.jit
 def covariance_parpy(cov, data, float_n, M):
     parpy.label('i')
@@ -14,13 +13,14 @@ def covariance_parpy(cov, data, float_n, M):
             cov[j, i] = cov[i, j]
 
 def kernel(M, float_n, data):
-    float_n = torch.tensor(float(float_n), dtype=data.dtype, device=data.device)
-    mean = torch.mean(data, axis=0)
-    data -= mean
-    cov = torch.zeros((M, M), dtype=data.dtype, device=data.device)
+    t_data = data.torch()
+    float_n = torch.tensor(float(float_n), dtype=t_data.dtype, device=t_data.device)
+    mean = torch.mean(t_data, axis=0)
+    t_data -= mean
+    cov = parpy.buffer.zeros((M, M), data.dtype, data.backend)
     p = {
         'i': parpy.threads(M),
         'j': parpy.threads(256),
     }
-    covariance_parpy(cov, data, float_n, M, opts=parpy.par(p))
+    covariance_parpy(cov, t_data, float_n, M, opts=parpy.par(p))
     return cov

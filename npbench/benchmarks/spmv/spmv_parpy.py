@@ -1,6 +1,5 @@
 # Sparse Matrix-Vector Multiplication (SpMV)
 import parpy
-import torch
 
 @parpy.jit
 def spmv_helper(A_row, A_col, A_val, N, x, y):
@@ -14,9 +13,9 @@ def spmv_helper(A_row, A_col, A_val, N, x, y):
 # (CSR) format
 def spmv(A_row, A_col, A_val, x):
     N, = A_row.shape
-    A_row = A_row.to(dtype=torch.int32)
-    A_col = A_col.to(dtype=torch.int32)
-    y = torch.zeros(N - 1, dtype=A_val.dtype)
+    A_row = A_row.with_type(parpy.types.I32)
+    A_col = A_col.with_type(parpy.types.I32)
+    y = parpy.buffer.zeros((N-1,), A_val.dtype, A_val.backend)
     p = {
         'i': parpy.threads(N-1),
         'j': parpy.threads(64).reduce(),

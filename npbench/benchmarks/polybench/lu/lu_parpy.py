@@ -1,6 +1,4 @@
 import parpy
-import torch
-
 
 @parpy.jit
 def lu_parpy(A, N):

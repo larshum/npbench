@@ -20,8 +20,8 @@ def crc16_kernel(data, poly, N, out):
         out[0] = crc & 0xFFFF
 
 def crc16(data, poly=0x8408):
-    data = data.to(dtype=torch.int32)
+    data = data.with_type(parpy.types.I32)
     N, = data.shape
-    out = torch.empty(1, dtype=torch.int32)
+    out = parpy.buffer.empty((1,), data.dtype, data.backend)
     crc16_kernel(data, poly, N, out, opts=parpy.par({}))
-    return int(out[0])
+    return int(out.numpy()[0])

@@ -1,6 +1,6 @@
+import numpy as np
 import parpy
 from parpy.operators import exp
-import torch
 
 @parpy.jit
 def parpy_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):
@@ -49,15 +49,15 @@ def parpy_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):
     imgOut[:, :] = c[1] * (y1[:, :] + y2[:, :])
 
 def kernel(alpha, imgIn):
-    y1 = torch.empty_like(imgIn)
-    y2 = torch.empty_like(imgIn)
-    imgOut = torch.empty_like(imgIn)
-    alpha = torch.tensor(alpha, dtype=imgIn.dtype)
+    y1 = parpy.buffer.empty_like(imgIn)
+    y2 = parpy.buffer.empty_like(imgIn)
+    imgOut = parpy.buffer.empty_like(imgIn)
+    alpha = np.array(alpha, dtype=imgIn.dtype.to_numpy())
     W, H = imgIn.shape
     k = (1.0 - exp(-alpha)) * (1.0 - exp(-alpha)) / (1.0 + alpha * exp(-alpha) - exp(2.0 * alpha))
-    a = torch.empty(8, dtype=y1.dtype)
-    b = torch.empty(2, dtype=y1.dtype)
-    c = torch.empty_like(b)
+    a = np.empty(8, dtype=y1.dtype.to_numpy())
+    b = np.empty(2, dtype=y1.dtype.to_numpy())
+    c = np.empty_like(b)
     a[0] = a[4] = k
     a[1] = a[5] = k * exp(-alpha) * (alpha - 1.0)
     a[2] = a[6] = k * exp(-alpha) * (alpha + 1.0)

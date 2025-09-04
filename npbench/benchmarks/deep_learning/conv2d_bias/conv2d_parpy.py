@@ -16,19 +16,24 @@ def conv2d_kernel(inputs, weights, output, H_out, W_out, N, C_in, C_out, K):
                             for e in range(C_out):
                                 output[a,i,j,e] += inputs[a,i+b,j+c,d] * weights[b,c,d,e]
 
-# Deep learning convolutional operator (stride = 1)
-def conv2d(input, weights):
+@parpy.jit
+def add_elemwise(conv2d_res, bias, C_out):
+    parpy.label('i')
+    for i in range(C_out):
+        parpy.label('j')
+        parpy.label('k')
+        parpy.label('l')
+        conv2d_res[:,:,:,i] += bias[i]
+
+def conv2d_bias(input, weights, bias):
     K = weights.shape[0]  # Assuming square kernel
     N = input.shape[0]
     H_out = input.shape[1] - K + 1
     W_out = input.shape[2] - K + 1
     C_in = input.shape[3]
     C_out = weights.shape[3]
-    output = torch.empty((N, H_out, W_out, C_out), dtype=torch.float32, device=weights.device)
+    output = parpy.buffer.empty((N, H_out, W_out, C_out), parpy.types.F32, weights.backend)
     p = {'i': parpy.threads(H_out), 'j': parpy.threads(W_out)}
     conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parpy.par(p))
-    return output
-
-
-def conv2d_bias(input, weights, bias):
-    return conv2d(input, weights) + bias
+    p = {'i': parpy.threads(C_out), 'j': parpy.threads(N), 'k': parpy.threads(H_out), 'l': parpy.threads(W_out)}
+    add_elemwise(output, bias, C_out, opts=parpy.par(p))

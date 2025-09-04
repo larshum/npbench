@@ -1,6 +1,5 @@
 import parpy
 from parpy.operators import max
-import torch
 
 @parpy.jit
 def parpy_kernel(table, seq, N):
@@ -21,6 +20,6 @@ def parpy_kernel(table, seq, N):
                     table[i,j] = max(table[i,j], table[i,k] + table[k+1,j])
 
 def kernel(N, seq):
-    table = torch.zeros((N, N), dtype=torch.int32, device=seq.device)
+    table = parpy.buffer.zeros((N, N), parpy.types.I32, seq.backend)
     parpy_kernel(table, seq, N, opts=parpy.par({}))
     return table

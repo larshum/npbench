@@ -1,5 +1,4 @@
 import parpy
-import torch
 
 @parpy.jit
 def parpy_kernel(A, B, TSTEPS):

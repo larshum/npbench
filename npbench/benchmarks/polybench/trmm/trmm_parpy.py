@@ -1,5 +1,4 @@
 import parpy
-import torch
 
 @parpy.jit
 def trmm(alpha, A, B, M, N):

@@ -1,6 +1,4 @@
 import parpy
-import torch
-
 
 @parpy.jit
 def ludcmp_kernel(A, b, x, y, N):
@@ -34,8 +32,8 @@ def ludcmp_kernel(A, b, x, y, N):
 
 def kernel(A, b):
     N, N = A.shape
-    x = torch.zeros_like(b)
-    y = torch.zeros_like(b)
+    x = parpy.buffer.zeros_like(b)
+    y = parpy.buffer.zeros_like(b)
     p = {'k': parpy.threads(128).reduce()}
     ludcmp_kernel(A, b, x, y, N, opts=parpy.par(p))
     return x, y

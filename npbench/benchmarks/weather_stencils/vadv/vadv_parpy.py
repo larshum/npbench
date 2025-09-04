@@ -1,5 +1,4 @@
 import parpy
-import torch
 
 # Sample constants
 BET_M = 0.5
@@ -100,21 +99,21 @@ def vadv_parpy(
 
 # Adapted from https://github.com/GridTools/gt4py/blob/1caca893034a18d5df1522ed251486659f846589/tests/test_integration/stencil_definitions.py#L111
 def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
-    I, J, K = utens_stage.shape[0], utens_stage.shape[1], utens_stage.shape[2]
-    ccol = torch.empty((I, J, K), dtype=utens_stage.dtype, device=utens_stage.device)
-    dcol = torch.empty((I, J, K), dtype=utens_stage.dtype, device=utens_stage.device)
-    data_col = torch.empty((I, J), dtype=utens_stage.dtype, device=utens_stage.device)
+    I, J, K = utens_stage.shape
+    ccol = parpy.buffer.empty((I, J, K), dtype=utens_stage.dtype, backend=utens_stage.backend)
+    dcol = parpy.buffer.empty((I, J, K), dtype=utens_stage.dtype, backend=utens_stage.backend)
+    data_col = parpy.buffer.empty((I, J), dtype=utens_stage.dtype, backend=utens_stage.backend)
 
     # Extra allocations
-    gav = torch.empty_like(data_col)
-    gcv = torch.empty_like(gav)
-    as_ = torch.empty_like(gav)
-    cs = torch.empty_like(gav)
-    acol = torch.empty_like(gav)
-    bcol = torch.empty_like(gav)
-    correction_term = torch.empty_like(gav)
-    divided = torch.empty_like(gav)
-    datacol = torch.empty_like(gav)
+    gav = parpy.buffer.empty_like(data_col)
+    gcv = parpy.buffer.empty_like(gav)
+    as_ = parpy.buffer.empty_like(gav)
+    cs = parpy.buffer.empty_like(gav)
+    acol = parpy.buffer.empty_like(gav)
+    bcol = parpy.buffer.empty_like(gav)
+    correction_term = parpy.buffer.empty_like(gav)
+    divided = parpy.buffer.empty_like(gav)
+    datacol = parpy.buffer.empty_like(gav)
 
     p = {'I': parpy.threads(I), 'J': parpy.threads(J)}
     vadv_parpy(

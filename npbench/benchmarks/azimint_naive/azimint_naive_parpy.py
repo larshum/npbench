@@ -10,7 +10,6 @@
 
 import parpy
 from parpy.operators import float32, float64, max
-import torch
 
 @parpy.jit
 def parpy_kernel_32bit(data, radius, res, rmax, npt, N):
@@ -52,15 +51,15 @@ def parpy_kernel(data, radius, res, rmax, npt, N):
 
 def azimint_naive(data, radius, npt):
     N, = data.shape
-    rmax = torch.empty((1,), dtype=data.dtype, device=data.device)
-    res = torch.zeros(npt, dtype=data.dtype, device=data.device)
+    rmax = parpy.buffer.empty((1,), data.dtype, data.backend)
+    res = parpy.buffer.zeros((npt,), data.dtype, data.backend)
     p = {
         'i': parpy.threads(npt),
         'ix': parpy.threads(1024).reduce(),
         'j': parpy.threads(1024).reduce()
     }
     opts = parpy.par(p)
-    if data.dtype == torch.float32:
+    if data.dtype == parpy.types.F32:
         parpy_kernel_32bit(data, radius, res, rmax, npt, N, opts=opts)
     else:
         parpy_kernel(data, radius, res, rmax, npt, N, opts=opts)

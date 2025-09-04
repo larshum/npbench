@@ -1,6 +1,5 @@
 import parpy
 from parpy.operators import exp, max, sum
-import torch
 
 @parpy.jit
 def softmax_wrap(x, out, N, H, SM):
@@ -25,7 +24,7 @@ def softmax_wrap(x, out, N, H, SM):
 # Numerically-stable version of softmax
 def softmax(x):
     N, H, SM, SM = x.shape
-    out = torch.zeros_like(x)
+    out = parpy.buffer.zeros_like(x)
     p = {
         'i': parpy.threads(N),
         'j': parpy.threads(H),

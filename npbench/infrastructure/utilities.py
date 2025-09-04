@@ -177,6 +177,24 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
                 r = r.astype(v.dtype)
         except:
             pass
+        try:
+            import parpy
+            if isinstance(v, parpy.buffer.Buffer):
+                t = v.numpy()
+                if r.dtype == np.complex64 or r.dtype == np.complex128:
+                    # As we manually reshape containers of complex numbers, we
+                    # flatten both the expected result (r) and the actual value
+                    # (t) before converting it back to a complex view.
+                    t = t.flatten()
+                    r = r.flatten()
+                    if r.dtype == np.float32:
+                        v = t.view(np.complex64)
+                    else:
+                        v = t.view(np.complex128)
+                else:
+                    v = t
+        except:
+            pass
 
         if not np.allclose(r, v, rtol=rtol, atol=atol):
             relerror = relative_error(r, v)

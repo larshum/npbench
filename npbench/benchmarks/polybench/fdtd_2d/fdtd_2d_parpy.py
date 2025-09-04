@@ -1,5 +1,4 @@
 import parpy
-import torch
 
 @parpy.jit
 def kernel_wrap(ex, ey, hz, _fict_, TMAX):

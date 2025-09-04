@@ -28,7 +28,6 @@
 
 import parpy
 from parpy.operators import atan2, cos, sin, sqrt
-import torch
 
 @parpy.jit
 def kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N):
@@ -44,7 +43,7 @@ def arc_distance(theta_1, phi_1, theta_2, phi_2):
     Calculates the pairwise arc distance between all points in vector a and b.
     """
     N, = theta_1.shape
-    distance_matrix = torch.empty_like(theta_1)
+    distance_matrix = parpy.buffer.empty_like(theta_1)
     p = {'i': parpy.threads(N)}
     kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N, opts=parpy.par(p))
     return distance_matrix

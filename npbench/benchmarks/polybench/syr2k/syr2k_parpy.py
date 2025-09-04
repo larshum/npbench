@@ -1,5 +1,4 @@
 import parpy
-import torch
 
 @parpy.jit
 def kernel_wrap(alpha, beta, C, A, B, N, M):

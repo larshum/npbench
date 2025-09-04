@@ -44,9 +44,9 @@ def parpy_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N):
                 u[i,j] = p[i,j] * u[i,j+1] + q[i,j]
 
 def kernel(TSTEPS, N, u):
-    v = torch.empty_like(u)
-    p = torch.empty_like(u)
-    q = torch.empty_like(u)
+    v = parpy.buffer.empty_like(u)
+    p = parpy.buffer.empty_like(u)
+    q = parpy.buffer.empty_like(u)
     DX = 1.0 / N
     DY = 1.0 / N
     DT = 1.0 / TSTEPS
@@ -55,9 +55,10 @@ def kernel(TSTEPS, N, u):
     mul1 = B1 * DT / (DX * DX)
     mul2 = B2 * DT / (DY * DY)
 
-    a = c = torch.tensor(-mul1 / 2.0, dtype=u.dtype)
-    b = e = torch.tensor(1.0 + mul2, dtype=u.dtype)
-    d = f = torch.tensor(-mul2 / 2.0, dtype=u.dtype)
+    dtype = u.dtype.to_torch()
+    a = c = torch.tensor(-mul1 / 2.0, dtype=dtype)
+    b = e = torch.tensor(1.0 + mul2, dtype=dtype)
+    d = f = torch.tensor(-mul2 / 2.0, dtype=dtype)
     par = { 'i': parpy.threads(N-2) }
     parpy_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N, opts=parpy.par(par))
     return u

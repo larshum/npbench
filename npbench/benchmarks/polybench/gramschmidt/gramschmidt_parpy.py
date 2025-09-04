@@ -1,6 +1,5 @@
 import parpy
 from parpy.operators import sqrt, sum
-import torch
 
 @parpy.jit
 def parpy_kernel(A, R, Q, M, N):
@@ -22,9 +21,8 @@ def parpy_kernel(A, R, Q, M, N):
             A[:,j] -= Q[:,k] * R[k,j]
 
 def kernel(A):
-
-    Q = torch.zeros_like(A)
-    R = torch.zeros((A.shape[1], A.shape[1]), dtype=A.dtype, device=A.device)
+    Q = parpy.buffer.zeros_like(A)
+    R = parpy.buffer.zeros((A.shape[1], A.shape[1]), A.dtype, A.backend)
 
     M, N = A.shape
     p = {

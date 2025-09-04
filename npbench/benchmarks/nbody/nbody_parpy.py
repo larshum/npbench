@@ -3,7 +3,6 @@
 
 import parpy
 from parpy.operators import sqrt, sum
-import torch
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz
@@ -105,23 +104,36 @@ def nbody_kernel(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, ac
         # get energy of system
         getEnergy_kernel(pos, vel, mass, G, KE[i], PE[i], dx, dy, dz, inv_r, tmp, N)
 
+@parpy.jit
+def nbody_center_of_mass_kernel(mass, vel, t1, t2, N):
+    parpy.label('N')
+    for i in range(N):
+        t1[:] += mass[i,:] * vel[i,:]
+        t2[:] += mass[i,:]
+
+    parpy.label('N')
+    for i in range(N):
+        vel[i,:] -= t1[:] / t2[:]
+
 def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     # Convert to Center-of-Mass frame
-    vel -= torch.mean(mass * vel, axis=0) / torch.mean(mass)
+    t1 = parpy.buffer.zeros((3,), vel.dtype, vel.backend)
+    t2 = parpy.buffer.zeros((3,), vel.dtype, vel.backend)
+    nbody_center_of_mass_kernel(mass, vel, t1, t2, N, opts=parpy.par({'N': parpy.threads(N)}))
 
     # Allocate temporary data used within the megakernel
     N,_ = pos.shape
     # NOTE: We add a dummy dimension to KE and PE to ensure they are passed as
     # tensors to the underlying kernels, so that we can modify individual
     # elements within kernels.
-    KE = torch.empty((Nt + 1, 1), dtype=pos.dtype, device=pos.device)
-    PE = torch.empty_like(KE)
-    a = torch.empty((N, 3), dtype=pos.dtype, device=pos.device)
-    dx = torch.empty((N, N), dtype=pos.dtype, device=pos.device)
-    dy = torch.empty_like(dx)
-    dz = torch.empty_like(dx)
-    inv_r = torch.empty_like(dx)
-    tmp = torch.empty_like(dx)
+    KE = parpy.buffer.empty((Nt + 1, 1), pos.dtype, pos.backend)
+    PE = parpy.buffer.empty_like(KE)
+    a = parpy.buffer.empty((N, 3), pos.dtype, pos.backend)
+    dx = parpy.buffer.empty((N, N), pos.dtype, pos.backend)
+    dy = parpy.buffer.empty_like(dx)
+    dz = parpy.buffer.empty_like(dx)
+    inv_r = parpy.buffer.empty_like(dx)
+    tmp = parpy.buffer.empty_like(dx)
 
     p = {
         'N2': parpy.threads(N*N),

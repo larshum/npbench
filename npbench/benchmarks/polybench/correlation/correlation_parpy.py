@@ -2,7 +2,6 @@ import parpy
 from parpy.operators import sum
 import torch
 
-
 @parpy.jit
 def parpy_kernel(corr, data, M):
     parpy.label('i')
@@ -13,6 +12,7 @@ def parpy_kernel(corr, data, M):
             corr[j, i] = corr[i, j]
 
 def kernel(M, float_n, data):
+    data = data.torch()
     float_n = torch.tensor(float(float_n), dtype=data.dtype, device=data.device)
     mean = torch.mean(data, axis=0)
     stddev = torch.std(data, unbiased=False, axis=0)

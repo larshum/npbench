@@ -20,9 +20,9 @@ class ParPyFramework(Framework):
         return [p.version for p in pkg_resources.working_set if p.project_name.startswith("parpy")][0]
 
     def imports(self) -> Dict[str, Any]:
+        import numpy
         import parpy
-        import torch
-        return {'parpy': parpy, 'torch': torch}
+        return {'parpy': parpy, 'np': numpy}
 
     def get_target_backend(self):
         if self.fname == "parpy_cuda":
@@ -37,23 +37,33 @@ class ParPyFramework(Framework):
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
 
+        import numpy as np
         import parpy
-        import torch
+
         if self.fname == "parpy_cuda":
-            def copy_parpy(t):
-                t = torch.tensor(t, device='cuda')
-                torch.cuda.synchronize()
-                return t
-            return copy_parpy
-        else:
-            def copy_parpy(t):
-                t = torch.tensor(t)
-                if t.dtype == torch.float64:
-                    return t.to(torch.float32)
-                if t.dtype == torch.complex128:
-                    return t.to(torch.complex64)
-                return t
-            return copy_parpy
+            backend = parpy.CompileBackend.Cuda
+        elif self.fname == "parpy_metal":
+            backend = parpy.CompileBackend.Metal
+
+        def reshape_complex(t, float_ty):
+            sh = list(t.shape) + [2]
+            t = t.view(dtype=float_ty)
+            return t.reshape(sh)
+
+        def copy_parpy(t):
+            if backend == parpy.CompileBackend.Metal:
+                if t.dtype == np.float64:
+                    t = t.astype(np.float32)
+                elif t.dtype == np.complex128:
+                    t = t.astype(np.complex64)
+            if t.dtype == np.complex64:
+                t = reshape_complex(t, np.float32)
+            elif t.dtype == np.complex128:
+                t = reshape_complex(t, np.float64)
+            b = parpy.buffer.from_array(t.copy(), backend)
+            b.sync()
+            return b
+        return copy_parpy
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
         """ Generates the setup-string that should be used before calling

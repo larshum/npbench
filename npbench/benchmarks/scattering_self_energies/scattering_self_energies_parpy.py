@@ -2,7 +2,6 @@
 
 import parpy
 from parpy.operators import sum
-import torch
 
 @parpy.jit
 def scattering_self_energies_kernel(neigh_idx, dH, G, D, Sigma, dHG, dHD, Nkz,
@@ -59,19 +58,17 @@ def scattering_self_energies_kernel(neigh_idx, dH, G, D, Sigma, dHG, dHD, Nkz,
 
 def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
     NA, NB = neigh_idx.shape
-    Nkz, NE, NA, Norb, Norb = G.shape
-    Nqz, Nw, NA, NB, N3D, N3D = D.shape
+    Nkz, NE, NA, Norb, Norb, _ = G.shape
+    Nqz, Nw, NA, NB, N3D, N3D, _ = D.shape
     p = {
         'Nkz': parpy.threads(Nkz),
         'NE': parpy.threads(NE),
         'NA': parpy.threads(NA),
         'threads': parpy.threads(32)
     }
-    dHG = torch.zeros(Nkz, NE, NA, Norb, Norb, dtype=G.dtype, device=G.device)
-    dHD = torch.zeros_like(dHG)
+    dHG = parpy.buffer.zeros((Nkz, NE, NA, Norb, Norb, 2), G.dtype, G.backend)
+    dHD = parpy.buffer.zeros_like(dHG)
     scattering_self_energies_kernel(
-        neigh_idx, torch.view_as_real(dH), torch.view_as_real(G),
-        torch.view_as_real(D), torch.view_as_real(Sigma),
-        torch.view_as_real(dHG), torch.view_as_real(dHD),
+        neigh_idx, dH, G, D, Sigma, dHG, dHD,
         Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, opts=parpy.par(p)
     )

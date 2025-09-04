@@ -1,6 +1,5 @@
 import parpy
 from parpy.operators import min
-import torch
 
 @parpy.jit
 def kernel_helper(path, N):
