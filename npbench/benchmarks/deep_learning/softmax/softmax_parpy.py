@@ -24,12 +24,12 @@ def softmax_wrap(x, out, N, H, SM):
 # Numerically-stable version of softmax
 def softmax(x):
     N, H, SM, SM = x.shape
-    out = parpy.buffer.zeros_like(x)
+    out = parpy.buffer.empty_like(x)
     p = {
         'i': parpy.threads(N),
         'j': parpy.threads(H),
         'k': parpy.threads(SM),
-        'l': parpy.threads(256),
+        'l': parpy.threads(64),
     }
     softmax_wrap(x, out, N, H, SM, opts=parpy.par(p))
     return out
