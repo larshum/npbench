@@ -34,6 +34,6 @@ def kernel(A, b):
     N, N = A.shape
     x = parpy.buffer.zeros_like(b)
     y = parpy.buffer.zeros_like(b)
-    p = {'k': parpy.threads(128).reduce()}
+    p = {'k': parpy.threads(128).par_reduction()}
     ludcmp_kernel(A, b, x, y, N, opts=parpy.par(p))
     return x, y

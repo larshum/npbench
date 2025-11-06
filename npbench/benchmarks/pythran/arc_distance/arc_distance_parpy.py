@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import parpy
-from parpy.operators import atan2, cos, sin, sqrt
+from parpy.math import atan2, cos, sin, sqrt
 
 @parpy.jit
 def kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N):

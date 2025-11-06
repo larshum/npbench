@@ -1,6 +1,6 @@
 import numpy as np
+from numpy import exp
 import parpy
-from parpy.operators import exp
 
 @parpy.jit
 def parpy_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H):

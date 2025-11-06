@@ -1,12 +1,12 @@
 import math
 import parpy
-from parpy.operators import inf, max
+from parpy.builtin import inf
 import torch
 
 @parpy.jit
 def relu_kernel(x):
     parpy.label('N')
-    x[:] = parpy.operators.max(x[:], 0.0)
+    x[:] = parpy.builtin.maximum(x[:], 0.0)
 
 def relu(x):
     N = math.prod(x.shape)
@@ -45,7 +45,7 @@ def conv2d_bias(input, weights, bias):
     W_out = input.shape[2] - K + 1
     C_in = input.shape[3]
     C_out = weights.shape[3]
-    output = parpy.buffer.empty((N, H_out, W_out, C_out), parpy.types.F32, weights.backend)
+    output = parpy.buffer.empty((N, H_out, W_out, C_out), parpy.types.F32, weights.backend())
     p = {'i': parpy.threads(H_out), 'j': parpy.threads(W_out)}
     conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parpy.par(p))
     p = {'i': parpy.threads(C_out), 'j': parpy.threads(N), 'k': parpy.threads(H_out), 'l': parpy.threads(W_out)}
@@ -64,14 +64,14 @@ def maxpool2d_kernel(x, output, N_0, N_1, N_2, N_3):
                 for b in range(N_3):
                     for ii in range(2):
                         for jj in range(2):
-                            output[a,i,j,b] = max(output[a,i,j,b], x[a,2*i+ii,2*j+jj,b])
+                            output[a,i,j,b] = parpy.builtin.maximum(output[a,i,j,b], x[a,2*i+ii,2*j+jj,b])
             
 
 # 2x2 maxpool operator, as used in LeNet-5
 def maxpool2d(x):
     output = parpy.buffer.empty(
         (x.shape[0], x.shape[1] // 2, x.shape[2] // 2, x.shape[3]),
-        x.dtype, x.backend
+        x.dtype, x.backend()
     )
     N_0, N_1, N_2, N_3 = output.shape
     p = {'i': parpy.threads(N_1), 'j': parpy.threads(N_2)}

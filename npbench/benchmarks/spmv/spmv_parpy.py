@@ -15,10 +15,10 @@ def spmv(A_row, A_col, A_val, x):
     N, = A_row.shape
     A_row = A_row.with_type(parpy.types.I32)
     A_col = A_col.with_type(parpy.types.I32)
-    y = parpy.buffer.zeros((N-1,), A_val.dtype, A_val.backend)
+    y = parpy.buffer.zeros((N-1,), A_val.dtype, A_val.backend())
     p = {
         'i': parpy.threads(N-1),
-        'j': parpy.threads(64).reduce(),
+        'j': parpy.threads(64).par_reduction(),
     }
     spmv_helper(A_row, A_col, A_val, N, x, y, opts=parpy.par(p))
     return y

@@ -87,8 +87,8 @@ def channel_flow_kernel(nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b, udi
     parpy.label('nx')
     vn[:,:] = v[:,:]
 
-    build_up_b(rho, dt, dx, dy, u, v, b)
-    pressure_poisson_periodic(nit, p, dx, dy, b, pn)
+    parpy.builtin.inline(build_up_b(rho, dt, dx, dy, u, v, b))
+    parpy.builtin.inline(pressure_poisson_periodic(nit, p, dx, dy, b, pn))
 
     parpy.label('ny')
     parpy.label('nx')
@@ -173,9 +173,9 @@ def channel_flow_kernel(nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b, udi
 
     # Compute udiff = (sum(u) - sum(un)) / sum(u)
     parpy.label('reduce')
-    udiff[1] = parpy.operators.sum(u[:,:])
+    udiff[1] = parpy.reduce.sum(u[:,:])
     parpy.label('reduce')
-    udiff[2] = parpy.operators.sum(un[:,:])
+    udiff[2] = parpy.reduce.sum(un[:,:])
     with parpy.gpu:
         udiff[0] = (udiff[1] - udiff[2]) / udiff[1]
 
@@ -184,7 +184,7 @@ def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
     vn = parpy.buffer.empty_like(v)
     pn = parpy.buffer.empty_like(p)
     b = parpy.buffer.zeros_like(u)
-    udiff_tmp = parpy.buffer.empty((3,), u.dtype, u.backend)
+    udiff_tmp = parpy.buffer.empty((3,), u.dtype, u.backend())
 
     udiff = 1
     stepcount = 0

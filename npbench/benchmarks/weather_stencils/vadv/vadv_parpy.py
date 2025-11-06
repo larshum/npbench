@@ -100,9 +100,9 @@ def vadv_parpy(
 # Adapted from https://github.com/GridTools/gt4py/blob/1caca893034a18d5df1522ed251486659f846589/tests/test_integration/stencil_definitions.py#L111
 def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     I, J, K = utens_stage.shape
-    ccol = parpy.buffer.empty((I, J, K), dtype=utens_stage.dtype, backend=utens_stage.backend)
-    dcol = parpy.buffer.empty((I, J, K), dtype=utens_stage.dtype, backend=utens_stage.backend)
-    data_col = parpy.buffer.empty((I, J), dtype=utens_stage.dtype, backend=utens_stage.backend)
+    ccol = parpy.buffer.empty((I, J, K), dtype=utens_stage.dtype, backend=utens_stage.backend())
+    dcol = parpy.buffer.empty((I, J, K), dtype=utens_stage.dtype, backend=utens_stage.backend())
+    data_col = parpy.buffer.empty((I, J), dtype=utens_stage.dtype, backend=utens_stage.backend())
 
     # Extra allocations
     gav = parpy.buffer.empty_like(data_col)

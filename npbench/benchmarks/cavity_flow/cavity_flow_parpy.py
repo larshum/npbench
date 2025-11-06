@@ -61,8 +61,8 @@ def cavity_flow_kernel(nx, ny, nt, nit, u, un, v, vn, b, dt, dx, dy, p, pn, rho,
         parpy.label('nx')
         pn[:,:] = p[:,:]
 
-        build_up_b(b, rho, dt, u, v, dx, dy)
-        pressure_poisson(nit, p, pn, dx, dy, b)
+        parpy.builtin.inline(build_up_b(b, rho, dt, u, v, dx, dy))
+        parpy.builtin.inline(pressure_poisson(nit, p, pn, dx, dy, b))
 
         parpy.label('ny')
         parpy.label('nx')
@@ -111,7 +111,7 @@ def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
     un = parpy.buffer.empty_like(u)
     vn = parpy.buffer.empty_like(v)
     pn = parpy.buffer.empty_like(p)
-    b = parpy.buffer.zeros((ny, nx), u.dtype, u.backend)
+    b = parpy.buffer.zeros((ny, nx), u.dtype, u.backend())
 
     par = {'ny': parpy.threads(ny), 'nx': parpy.threads(nx)}
     opts = parpy.par(par)

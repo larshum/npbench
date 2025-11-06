@@ -9,36 +9,27 @@
 # 7th European Conference on Python in Science (EuroSciPy 2014).
 
 import parpy
-from parpy.operators import float32, float64, max
+from parpy.builtin import convert
+from parpy.types import F64
+
+T = parpy.types.type_var()
+N = parpy.types.symbol()
 
 @parpy.jit
-def parpy_kernel_32bit(data, radius, res, rmax, npt, N):
+def parpy_kernel(
+        data: parpy.types.buffer(T, [N]),
+        radius: parpy.types.buffer(T, [N]),
+        res,
+        rmax,
+        npt
+):
     parpy.label('ix')
     for i in range(N):
-        rmax[0] = max(rmax[0], radius[i])
+        rmax[0] = parpy.builtin.maximum(rmax[0], radius[i])
     parpy.label('i')
     for i in range(npt):
-        r1 = rmax[0] * float32(i) / float32(npt)
-        r2 = rmax[0] * float32(i+1) / float32(npt)
-        c = 0.0
-        parpy.label('j')
-        for j in range(N):
-            c = c + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0)
-        s = 0.0
-        parpy.label('j')
-        for j in range(N):
-            s = s + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0) * data[j]
-        res[i] = s / c
-
-@parpy.jit
-def parpy_kernel(data, radius, res, rmax, npt, N):
-    parpy.label('ix')
-    for i in range(N):
-        rmax[0] = max(rmax[0], radius[i])
-    parpy.label('i')
-    for i in range(npt):
-        r1 = rmax[0] * float64(i) / float64(npt)
-        r2 = rmax[0] * float64(i+1) / float64(npt)
+        r1 = rmax[0] * convert(i, F64) / convert(npt, F64)
+        r2 = rmax[0] * convert(i+1, F64) / convert(npt, F64)
         c = 0.0
         parpy.label('j')
         for j in range(N):
@@ -51,16 +42,13 @@ def parpy_kernel(data, radius, res, rmax, npt, N):
 
 def azimint_naive(data, radius, npt):
     N, = data.shape
-    rmax = parpy.buffer.empty((1,), data.dtype, data.backend)
-    res = parpy.buffer.zeros((npt,), data.dtype, data.backend)
+    rmax = parpy.buffer.empty((1,), data.dtype, data.backend())
+    res = parpy.buffer.zeros((npt,), data.dtype, data.backend())
     p = {
         'i': parpy.threads(npt),
-        'ix': parpy.threads(1024).reduce(),
-        'j': parpy.threads(1024).reduce()
+        'ix': parpy.threads(1024).par_reduction(),
+        'j': parpy.threads(1024).par_reduction()
     }
     opts = parpy.par(p)
-    if data.dtype == parpy.types.F32:
-        parpy_kernel_32bit(data, radius, res, rmax, npt, N, opts=opts)
-    else:
-        parpy_kernel(data, radius, res, rmax, npt, N, opts=opts)
+    parpy_kernel(data, radius, res, rmax, npt, opts=opts)
     return res

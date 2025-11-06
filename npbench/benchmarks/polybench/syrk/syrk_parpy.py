@@ -17,7 +17,7 @@ def kernel(alpha, beta, C, A):
     N, M = A.shape
     p = {
         'i': parpy.threads(N),
-        'k': parpy.threads(256).reduce()
+        'k': parpy.threads(256).par_reduction()
     }
     syrk(alpha, beta, C, A, N, M, opts=parpy.par(p))
 

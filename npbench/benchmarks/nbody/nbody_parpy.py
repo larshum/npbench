@@ -2,7 +2,7 @@
 # TODO: Add GPL-3.0 License
 
 import parpy
-from parpy.operators import sqrt, sum
+from parpy.math import sqrt
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz
@@ -35,17 +35,17 @@ def getAcc_kernel(pos, mass, G, softening, dx, dy, dz, inv_r3, a, N):
     parpy.label('N')
     for i in range(0, N):
         parpy.label('reduce')
-        a[i,0] = sum(G * (dx[i,:] * inv_r3[i,:]) * mass[:,0])
+        a[i,0] = parpy.reduce.sum(G * (dx[i,:] * inv_r3[i,:]) * mass[:,0])
         parpy.label('reduce')
-        a[i,1] = sum(G * (dy[i,:] * inv_r3[i,:]) * mass[:,0])
+        a[i,1] = parpy.reduce.sum(G * (dy[i,:] * inv_r3[i,:]) * mass[:,0])
         parpy.label('reduce')
-        a[i,2] = sum(G * (dz[i,:] * inv_r3[i,:]) * mass[:,0])
+        a[i,2] = parpy.reduce.sum(G * (dz[i,:] * inv_r3[i,:]) * mass[:,0])
 
 @parpy.jit
 def getEnergy_kernel(pos, vel, mass, G, KE, PE, dx, dy, dz, inv_r, tmp, N):
     with parpy.gpu:
         parpy.label('i')
-        KE[0] = sum(mass[:,0] * (vel[:,0]**2.0 + vel[:,1]**2.0 + vel[:,2]**2.0))
+        KE[0] = parpy.reduce.sum(mass[:,0] * (vel[:,0]**2.0 + vel[:,1]**2.0 + vel[:,2]**2.0))
         KE[0] *= 0.5
 
     parpy.label('N2')
@@ -80,8 +80,8 @@ def getEnergy_kernel(pos, vel, mass, G, KE, PE, dx, dy, dz, inv_r, tmp, N):
 
 @parpy.jit
 def nbody_kernel(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, acc, inv_r, tmp):
-    getAcc_kernel(pos, mass, G, softening, dx, dy, dz, inv_r, acc, N)
-    getEnergy_kernel(pos, vel, mass, G, KE[0], PE[0], dx, dy, dz, inv_r, tmp, N)
+    parpy.builtin.inline(getAcc_kernel(pos, mass, G, softening, dx, dy, dz, inv_r, acc, N))
+    parpy.builtin.inline(getEnergy_kernel(pos, vel, mass, G, KE[0], PE[0], dx, dy, dz, inv_r, tmp, N))
     for i in range(1, Nt+1):
         # (1/2) kick
         parpy.label('N')
@@ -94,7 +94,7 @@ def nbody_kernel(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, ac
         pos[:,:] += vel[:,:] * dt
 
         # update accelerations
-        getAcc_kernel(pos, mass, G, softening, dx, dy, dz, inv_r, acc, N)
+        parpy.builtin.inline(getAcc_kernel(pos, mass, G, softening, dx, dy, dz, inv_r, acc, N))
 
         # (1/2) kick
         parpy.label('N')
@@ -102,7 +102,7 @@ def nbody_kernel(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, ac
         vel[:,:] += acc[:,:] * dt / 2.0
 
         # get energy of system
-        getEnergy_kernel(pos, vel, mass, G, KE[i], PE[i], dx, dy, dz, inv_r, tmp, N)
+        parpy.builtin.inline(getEnergy_kernel(pos, vel, mass, G, KE[i], PE[i], dx, dy, dz, inv_r, tmp, N))
 
 @parpy.jit
 def nbody_center_of_mass_kernel(mass, vel, t1, t2, N):
@@ -117,8 +117,8 @@ def nbody_center_of_mass_kernel(mass, vel, t1, t2, N):
 
 def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     # Convert to Center-of-Mass frame
-    t1 = parpy.buffer.zeros((3,), vel.dtype, vel.backend)
-    t2 = parpy.buffer.zeros((3,), vel.dtype, vel.backend)
+    t1 = parpy.buffer.zeros((3,), vel.dtype, vel.backend())
+    t2 = parpy.buffer.zeros((3,), vel.dtype, vel.backend())
     nbody_center_of_mass_kernel(mass, vel, t1, t2, N, opts=parpy.par({'N': parpy.threads(N)}))
 
     # Allocate temporary data used within the megakernel
@@ -126,10 +126,10 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     # NOTE: We add a dummy dimension to KE and PE to ensure they are passed as
     # tensors to the underlying kernels, so that we can modify individual
     # elements within kernels.
-    KE = parpy.buffer.empty((Nt + 1, 1), pos.dtype, pos.backend)
+    KE = parpy.buffer.empty((Nt + 1, 1), pos.dtype, pos.backend())
     PE = parpy.buffer.empty_like(KE)
-    a = parpy.buffer.empty((N, 3), pos.dtype, pos.backend)
-    dx = parpy.buffer.empty((N, N), pos.dtype, pos.backend)
+    a = parpy.buffer.empty((N, 3), pos.dtype, pos.backend())
+    dx = parpy.buffer.empty((N, N), pos.dtype, pos.backend())
     dy = parpy.buffer.empty_like(dx)
     dz = parpy.buffer.empty_like(dx)
     inv_r = parpy.buffer.empty_like(dx)
@@ -138,7 +138,7 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     p = {
         'N2': parpy.threads(N*N),
         'N': parpy.threads(N),
-        'reduce': parpy.threads(64).reduce()
+        'reduce': parpy.threads(64).par_reduction()
     }
     nbody_kernel(
         mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, a, inv_r, tmp,

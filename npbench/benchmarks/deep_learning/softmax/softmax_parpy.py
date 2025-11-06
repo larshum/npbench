@@ -1,5 +1,5 @@
 import parpy
-from parpy.operators import exp, max, sum
+from parpy.math import exp
 
 @parpy.jit
 def softmax_wrap(x, out, N, H, SM):
@@ -10,13 +10,13 @@ def softmax_wrap(x, out, N, H, SM):
             parpy.label('k')
             for k in range(SM):
                 parpy.label('l')
-                m = max(x[i,j,k,:])
+                m = parpy.reduce.max(x[i,j,k,:])
 
                 parpy.label('l')
                 out[i,j,k,:] = exp(x[i,j,k,:]-m)
 
                 parpy.label('l')
-                s = sum(out[i,j,k,:])
+                s = parpy.reduce.sum(out[i,j,k,:])
 
                 parpy.label('l')
                 out[i,j,k,:] /= s

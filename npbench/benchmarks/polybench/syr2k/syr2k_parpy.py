@@ -14,7 +14,7 @@ def kernel(alpha, beta, C, A, B):
     N, M = A.shape
     p = {
         'i': parpy.threads(N),
-        'k': parpy.threads(256).reduce()
+        'k': parpy.threads(256).par_reduction()
     }
     kernel_wrap(alpha, beta, C, A, B, N, M, opts=parpy.par(p))
 

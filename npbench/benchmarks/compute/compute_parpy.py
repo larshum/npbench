@@ -1,6 +1,7 @@
 import numpy as np
 import parpy
-from parpy.operators import int64, min, max
+from parpy.builtin import convert, minimum, maximum
+from parpy.types import I64
 
 @parpy.jit
 def compute_helper(array_1, array_2, N, M, a, b, c, out):
@@ -8,7 +9,7 @@ def compute_helper(array_1, array_2, N, M, a, b, c, out):
     for i in range(N):
         parpy.label('j')
         for j in range(M):
-            clamped = min(max(array_1[i,j], int64(2)), int64(10))
+            clamped = minimum(maximum(array_1[i,j], convert(2, I64)), convert(10, I64))
             out[i,j] = clamped * a + array_2[i,j] * b + c
 
 def compute(array_1, array_2, a, b, c):

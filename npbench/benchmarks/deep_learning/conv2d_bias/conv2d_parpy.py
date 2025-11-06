@@ -32,7 +32,7 @@ def conv2d_bias(input, weights, bias):
     W_out = input.shape[2] - K + 1
     C_in = input.shape[3]
     C_out = weights.shape[3]
-    output = parpy.buffer.empty((N, H_out, W_out, C_out), parpy.types.F32, weights.backend)
+    output = parpy.buffer.empty((N, H_out, W_out, C_out), parpy.types.F32, weights.backend())
     p = {'i': parpy.threads(H_out), 'j': parpy.threads(W_out)}
     conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parpy.par(p))
     p = {'i': parpy.threads(C_out), 'j': parpy.threads(N), 'k': parpy.threads(H_out), 'l': parpy.threads(W_out)}

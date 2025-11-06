@@ -14,6 +14,6 @@ def kernel(alpha, A, B):
     M, N = B.shape
     p = {
         'j': parpy.threads(N),
-        'k': parpy.threads(256).reduce()
+        'k': parpy.threads(256).par_reduction()
     }
     trmm(alpha, A, B, M, N, opts=parpy.par(p))

@@ -2,7 +2,7 @@
 
 import numpy as np
 import parpy
-from parpy.operators import tanh
+from parpy.math import tanh
 
 @parpy.jit
 def parpy_kernel(a, tmp, out, N):
@@ -18,7 +18,7 @@ def go_fast(a):
     tmp = np.array([0.0], dtype=a.dtype.to_numpy())
     out = parpy.buffer.empty_like(a)
     p = {
-        'i': parpy.threads(1024).reduce(),
+        'i': parpy.threads(1024).par_reduction(),
         'ix': parpy.threads(N),
         'j': parpy.threads(N)
     }
