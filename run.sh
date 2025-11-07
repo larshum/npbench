@@ -27,7 +27,8 @@ function run_benchmarks {
 }
 
 function bench_cuda {
-  export FRAMEWORKS=("cupy" "dace_gpu" "jax" "parpy_cuda" "torch_cuda")
+  #export FRAMEWORKS=("cupy" "dace_gpu" "jax" "parpy_cuda" "torch_cuda")
+  export FRAMEWORKS=("dace_gpu" "jax" "parpy_cuda" "torch_cuda_jit" "torch_cuda")
   export BENCHMARKS=("adi" "arc_distance" "azimint_naive" "cavity_flow" "channel_flow" "cholesky" "compute" "conv2d_bias" "correlation" "covariance" "crc16" "deriche" "durbin" "fdtd_2d" "floyd_warshall" "gemm" "go_fast" "gramschmidt" "hdiff" "heat_3d" "jacobi_1d" "jacobi_2d" "lenet" "lu" "ludcmp" "mlp" "nbody" "nussinov" "resnet" "scattering_self_energies" "seidel_2d" "softmax" "spmv" "symm" "syr2k" "syrk" "trisolv" "trmm" "vadv")
   export PRESET=L
   export BASELINE=torch_cuda
@@ -36,7 +37,7 @@ function bench_cuda {
 }
 
 function bench_metal {
-  export FRAMEWORKS=("jax32" "torch_metal" "parpy_metal" "numpy32")
+  export FRAMEWORKS=("jax32" "torch_metal_jit" "torch_metal" "parpy_metal" "numpy32")
   # We skip the following tests because numpy32 fails to validate compared to
   # the default numpy version (using 64-bit floats):
   # - adi

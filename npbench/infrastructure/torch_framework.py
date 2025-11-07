@@ -24,10 +24,12 @@ class TorchFramework(Framework):
         return {'torch': torch}
 
     def get_sync_string(self):
-        if self.fname == "torch_cuda":
+        if self.fname.startswith("torch_cuda"):
             return "torch.cuda.synchronize()"
-        elif self.fname == "torch_metal":
+        elif self.fname.startswith("torch_metal"):
             return "torch.mps.synchronize()"
+        else:
+            raise RuntimeError(f"Unknown framework {self.fname}")
 
     def copy_func(self) -> Callable:
         """ Returns the copy-method that should be used 
@@ -35,13 +37,13 @@ class TorchFramework(Framework):
 
         import numpy as np
         import torch
-        if self.fname == "torch_cuda":
+        if self.fname.startswith("torch_cuda"):
             def copy_func(t):
                 t = torch.tensor(t, device='cuda')
                 torch.cuda.synchronize()
                 return t
             return copy_func
-        elif self.fname == "torch_metal":
+        elif self.fname.startswith("torch_metal"):
             def copy_func(t):
                 if t.dtype == np.float64:
                     t = t.astype(np.float32)
@@ -76,6 +78,9 @@ class TorchFramework(Framework):
         """
 
         arg_str = self.arg_str(bench, impl)
-        main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
+        if self.fname.endswith("jit"):
+            main_exec_str = "__npb_result = torch.compile(__npb_impl)({a})".format(a=arg_str)
+        else:
+            main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
         sync_str = self.get_sync_string()
         return main_exec_str + "; " + sync_str
