@@ -1,7 +1,7 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import os
-import pkg_resources
 import traceback
+from importlib.metadata import version
 
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Callable, Sequence, Tuple
@@ -26,7 +26,7 @@ class DaceFramework(Framework):
 
     def version(self) -> str:
         """ Return the framework version. """
-        return pkg_resources.get_distribution("dace").version
+        return version("dace")
 
     def copy_func(self) -> Callable:
         """ Returns the copy-method that should be used 

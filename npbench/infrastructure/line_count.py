@@ -47,7 +47,8 @@ class LineCount(object):
         dwarf = ""
         if "dwarf" in self.bench.info.keys():
             dwarf = self.bench.info["dwarf"]
-        version = self.frmwrk.version()
+        #version = self.frmwrk.version()
+        version = ""
 
         avalues = []
         for impl_file, impl_name in self.frmwrk.impl_files(self.bench):

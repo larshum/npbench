@@ -80,7 +80,8 @@ class Test(object):
         dwarf = ""
         if "dwarf" in self.bench.info.keys():
             dwarf = self.bench.info["dwarf"]
-        version = self.frmwrk.version()
+        #version = self.frmwrk.version()
+        version = ""
 
         @tout.exit_after(timeout)
         def first_execution(impl, impl_name):

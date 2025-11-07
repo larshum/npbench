@@ -1,5 +1,5 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
-import pkg_resources
+from importlib.metadata import version
 
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
@@ -17,7 +17,7 @@ class LegateFramework(Framework):
 
     def version(self) -> str:
         """ Return the framework version. """
-        return pkg_resources.get_distribution("legate.numpy").version
+        return version("legate.numpy")
 
     def imports(self) -> Dict[str, Any]:
         from legate.timing import time

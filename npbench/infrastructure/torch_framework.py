@@ -1,5 +1,5 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
-import pkg_resources
+from importlib.metadata import version
 
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
@@ -17,7 +17,7 @@ class TorchFramework(Framework):
 
     def version(self) -> str:
         """ Return the framework version. """
-        return [p.version for p in pkg_resources.working_set if p.project_name.startswith("torch")][0]
+        return version("torch")
 
     def imports(self) -> Dict[str, Any]:
         import torch

@@ -56,7 +56,7 @@ if __name__ == "__main__":
                                 save_strict=args["save_strict_sdfg"],
                                 load_strict=args["load_strict_sdfg"])
     numpy = generate_framework(args["validating_framework"])
-    lcount = LineCount(bench, frmwrk, numpy)
-    lcount.count()
+    #lcount = LineCount(bench, frmwrk, numpy)
+    #lcount.count()
     test = Test(bench, frmwrk, numpy)
     test.run(args["preset"], args["validate"], args["repeat"], args["timeout"])

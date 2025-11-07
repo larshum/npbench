@@ -1,5 +1,5 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
-import pkg_resources
+from importlib.metadata import version
 
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
@@ -17,7 +17,7 @@ class Numpy32Framework(Framework):
 
     def version(self) -> str:
         """ Return the framework version. """
-        return [p.version for p in pkg_resources.working_set if p.project_name.startswith("numpy")][0]
+        return version("numpy")
 
     def imports(self) -> Dict[str, Any]:
         import numpy

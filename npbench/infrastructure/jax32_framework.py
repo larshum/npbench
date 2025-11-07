@@ -1,6 +1,6 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import pathlib
-import pkg_resources
+from importlib.metadata import version
 
 try:
     import jax.numpy as jnp
@@ -29,7 +29,7 @@ class Jax32Framework(Framework):
         super().__init__(fname)
 
     def version(self) -> str:
-        return [p.version for p in pkg_resources.working_set if p.project_name.startswith("jax")][0]
+        return version("jax")
 
     def imports(self) -> Dict[str, Any]:
         return {'jax': jax}

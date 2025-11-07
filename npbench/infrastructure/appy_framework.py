@@ -1,6 +1,4 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
-import pkg_resources
-
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
 

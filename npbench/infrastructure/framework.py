@@ -2,7 +2,7 @@
 import json
 import numpy as np
 import pathlib
-import pkg_resources
+from importlib.metadata import version
 
 from npbench.infrastructure import Benchmark
 from typing import Any, Callable, Dict, Sequence, Tuple
@@ -31,7 +31,7 @@ class Framework(object):
 
     def version(self) -> str:
         """ Returns the framework version. """
-        return pkg_resources.get_distribution(self.fname).version
+        return version(self.fname)
 
     def imports(self) -> Dict[str, Any]:
         """ Returns a dictionary any modules and methods needed for running
