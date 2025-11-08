@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "torch_metal_jit",
+        "full_name": "PyTorch Metal JIT",
+        "prefix": "torch",
+        "postfix": "torch",
+        "class": "TorchFramework",
+        "arch": "gpu"
+    }
+}
