@@ -15,3 +15,5 @@ def spmv(A_row, A_col, A_val, x):
         y[i] = vals @ x[cols]
 
     return y
+
+spmv_jit = torch.compile(spmv)

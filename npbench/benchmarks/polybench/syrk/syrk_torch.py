@@ -7,3 +7,5 @@ def kernel(alpha, beta, C, A):
         C[i, :i + 1] *= beta
         for k in range(A.shape[1]):
             C[i, :i + 1] += alpha * A[i, k] * A[:i + 1, k]
+
+kernel_jit = torch.compile(kernel)

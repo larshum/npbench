@@ -74,3 +74,5 @@ def azimint_hist(data, radius, npt):
     histu = histogram(radius, npt)[0]
     histw = histogram(radius, npt, weights=data)[0]
     return histw / histu
+
+azimint_hist_jit = torch.compile(azimint_hist)

@@ -15,3 +15,5 @@ def kernel(r):
         y[k] = alpha
 
     return y
+
+kernel_jit = torch.compile(kernel)

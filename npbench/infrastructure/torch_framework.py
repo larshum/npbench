@@ -1,8 +1,8 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 from importlib.metadata import version
 
-from npbench.infrastructure import Benchmark, Framework
-from typing import Any, Callable, Dict
+from npbench.infrastructure import Benchmark, Framework, utilities as util
+from typing import Any, Callable, Dict, Sequence, Tuple
 
 
 class TorchFramework(Framework):
@@ -55,6 +55,33 @@ class TorchFramework(Framework):
             return copy_func
         return super().copy_func()
 
+    def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
+        module_pypath = "npbench.benchmarks.{r}.{m}".format(
+                r = bench.info["relative_path"].replace('/', '.'),
+                m = bench.info["module_name"])
+        if "postfix" in self.info.keys():
+            postfix = self.info["postfix"]
+        else:
+            postfix = self.fname
+        module_str = "{m}_{p}".format(m = module_pypath, p = postfix)
+        func_str = bench.info["func_name"]
+
+        implementations = []
+
+        # Default implementation
+        ldict = dict()
+        exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
+        implementations.append((ldict["impl"], 'default'))
+
+        # Implementation with JIT-compilation if it exists
+        try:
+            exec("from {m} import {f}_jit as impl".format(m=module_str, f=func_str), ldict)
+            implementations.append((ldict["impl"], 'jit'))
+        except:
+            pass
+
+        return implementations
+
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
         """ Generates the setup-string that should be used before calling
         the benchmark implementation.
@@ -78,9 +105,6 @@ class TorchFramework(Framework):
         """
 
         arg_str = self.arg_str(bench, impl)
-        if self.fname.endswith("jit"):
-            main_exec_str = "__npb_result = torch.compile(__npb_impl)({a})".format(a=arg_str)
-        else:
-            main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
+        main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
         sync_str = self.get_sync_string()
         return main_exec_str + "; " + sync_str

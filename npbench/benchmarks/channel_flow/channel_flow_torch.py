@@ -150,3 +150,6 @@ def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
         stepcount += 1
 
     return stepcount
+
+# Causes segfault on PyTorch 2.7.1
+#channel_flow_jit = torch.compile(channel_flow)

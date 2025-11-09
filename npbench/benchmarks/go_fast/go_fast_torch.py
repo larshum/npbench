@@ -8,3 +8,5 @@ def go_fast(a):
     for i in range(a.shape[0]):
         trace += torch.tanh(a[i, i])
     return a + trace
+
+go_fast_jit = torch.compile(go_fast)

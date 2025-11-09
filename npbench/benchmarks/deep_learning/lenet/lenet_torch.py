@@ -50,3 +50,5 @@ def lenet5(input, conv1, conv1bias, conv2, conv2bias, fc1w, fc1b, fc2w, fc2b,
     x = relu(x @ fc1w + fc1b)
     x = relu(x @ fc2w + fc2b)
     return x @ fc3w + fc3b
+
+lenet5_jit = torch.compile(lenet5)

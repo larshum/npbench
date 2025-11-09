@@ -45,3 +45,5 @@ def kernel(alpha, imgIn):
     imgOut[:] = c2 * (y1 + y2)
 
     return imgOut
+
+kernel_jit = torch.compile(kernel)

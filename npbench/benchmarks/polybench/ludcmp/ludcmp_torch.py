@@ -18,3 +18,5 @@ def kernel(A, b):
         x[i] = (y[i] - A[i, i + 1:] @ x[i + 1:]) / A[i, i]
 
     return x, y
+
+kernel_jit = torch.compile(kernel)

@@ -21,3 +21,5 @@ def azimint_naive(data, radius, npt):
         values_r12 = data[mask_r12]
         res[i] = values_r12.mean()
     return res
+
+azimint_naive_jit = torch.compile(azimint_naive)

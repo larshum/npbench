@@ -15,3 +15,5 @@ def kernel(A):
             A[:, j] -= Q[:, k] * R[k, j]
 
     return Q, R
+
+kernel_jit = torch.compile(kernel)

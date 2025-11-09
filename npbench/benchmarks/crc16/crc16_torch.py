@@ -19,3 +19,5 @@ def crc16(data, poly=0x8408):
     crc = (crc << 8) | ((crc >> 8) & 0xFF)
 
     return crc & 0xFFFF
+
+crc16_jit = torch.compile(crc16)

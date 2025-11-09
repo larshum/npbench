@@ -76,3 +76,5 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
         datacol = dcol[:, :, k] - ccol[:, :, k] * data_col[:, :]
         data_col[:] = datacol
         utens_stage[:, :, k] = dtr_stage * (datacol - u_pos[:, :, k])
+
+vadv_jit = torch.compile(vadv)

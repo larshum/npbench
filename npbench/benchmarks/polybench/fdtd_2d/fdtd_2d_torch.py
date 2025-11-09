@@ -9,3 +9,5 @@ def kernel(TMAX, ex, ey, hz, _fict_):
         ex[:, 1:] -= 0.5 * (hz[:, 1:] - hz[:, :-1])
         hz[:-1, :-1] -= 0.7 * (ex[:-1, 1:] - ex[:-1, :-1] + ey[1:, :-1] -
                                ey[:-1, :-1])
+
+kernel_jit = torch.compile(kernel)

@@ -9,3 +9,5 @@ def kernel(A):
             A[i, j] /= A[j, j]
         for j in range(i, A.shape[0]):
             A[i, j] -= A[i, :i] @ A[:i, j]
+
+kernel_jit = torch.compile(kernel)

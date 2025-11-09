@@ -21,3 +21,5 @@ def mandelbrot(xmin, xmax, ymin, ymax, xn, yn, maxiter, horizon=2.0):
         Z[I] = Z[I]**2 + C[I]
     N[N == maxiter - 1] = 0
     return Z, N
+
+mandelbrot_jit = torch.compile(mandelbrot)

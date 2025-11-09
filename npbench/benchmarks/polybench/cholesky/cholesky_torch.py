@@ -10,3 +10,5 @@ def kernel(A):
             A[i, j] /= A[j, j]
         A[i, i] -= torch.dot(A[i, :i], A[i, :i])
         A[i, i] = torch.sqrt(A[i, i])
+
+kernel_jit = torch.compile(kernel)

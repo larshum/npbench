@@ -7,3 +7,5 @@ def kernel(alpha, A, B):
         for j in range(B.shape[1]):
             B[i, j] += torch.dot(A[i + 1:, i], B[i + 1:, j])
     B *= alpha
+
+kernel_jit = torch.compile(kernel)

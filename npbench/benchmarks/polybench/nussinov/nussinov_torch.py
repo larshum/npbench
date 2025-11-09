@@ -29,3 +29,5 @@ def kernel(N, seq):
                 table[i, j] = max(table[i, j], table[i, k] + table[k + 1, j])
 
     return table
+
+kernel_jit = torch.compile(kernel)

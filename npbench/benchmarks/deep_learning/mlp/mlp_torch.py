@@ -19,3 +19,5 @@ def mlp(input, w1, b1, w2, b2, w3, b3):
     x = relu(x @ w2 + b2)
     x = softmax(x @ w3 + b3)  # Softmax call can be omitted if necessary
     return x
+
+mlp_jit = torch.compile(mlp)

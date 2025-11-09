@@ -27,3 +27,5 @@ def hdiff(in_field, out_field, coeff):
     out_field[:, :, :] = in_field[2:I + 2, 2:J + 2, :] - coeff[:, :, :] * (
         flx_field[1:, :, :] - flx_field[:-1, :, :] + fly_field[:, 1:, :] -
         fly_field[:, :-1, :])
+
+hdiff_jit = torch.compile(hdiff)

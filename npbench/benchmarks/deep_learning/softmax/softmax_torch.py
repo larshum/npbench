@@ -7,3 +7,5 @@ def softmax(x):
     tmp_out = torch.exp(x - tmp_max.values)
     tmp_sum = torch.sum(tmp_out, axis=-1, keepdims=True)
     return tmp_out / tmp_sum
+
+softmax_jit = torch.compile(softmax)

@@ -18,3 +18,5 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
                                                 neigh_idx[a, b]] @ dH[a, b, i]
                                         dHD = dH[a, b, j] * D[q, w, a, b, i, j]
                                         Sigma[k, E, a] += dHG @ dHD
+
+scattering_self_energies_jit = torch.compile(scattering_self_energies)

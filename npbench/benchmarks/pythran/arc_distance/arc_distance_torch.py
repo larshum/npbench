@@ -38,3 +38,5 @@ def arc_distance(theta_1, phi_1, theta_2, phi_2):
                       (phi_2 - phi_1) / 2)**2
     distance_matrix = 2 * (torch.arctan2(torch.sqrt(temp), torch.sqrt(1 - temp)))
     return distance_matrix
+
+arc_distance_jit = torch.compile(arc_distance)

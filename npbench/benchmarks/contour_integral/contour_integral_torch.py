@@ -21,3 +21,5 @@ def contour_integral(NR, NM, slab_per_bc, Ham, int_pts, Y):
         P1 += z * X
 
     return P0, P1
+
+contour_integral_jit = torch.compile(contour_integral)

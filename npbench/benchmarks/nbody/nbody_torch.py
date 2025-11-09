@@ -114,3 +114,5 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
         KE[i + 1], PE[i + 1] = getEnergy(pos, vel, mass, G)
 
     return KE, PE
+
+nbody_jit = torch.compile(nbody)

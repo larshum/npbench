@@ -10,3 +10,5 @@ def kernel(alpha, beta, C, A, B):
             C[:i, j] += alpha * B[i, j] * A[i, :i]
             temp2[j] = B[:i, j] @ A[i, :i]
         C[i, :] += alpha * B[i, :] * A[i, i] + alpha * temp2
+
+kernel_jit = torch.compile(kernel)

@@ -43,3 +43,5 @@ def mandelbrot(xmin, xmax, ymin, ymax, xn, yn, itermax, horizon=2.0):
         Xi, Yi = Xi[I], Yi[I]
         C = C[I]
     return Z_.T, N_.T
+
+mandelbrot_jit = torch.compile(mandelbrot)

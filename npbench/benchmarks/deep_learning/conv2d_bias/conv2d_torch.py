@@ -24,3 +24,5 @@ def conv2d(input, weights):
 
 def conv2d_bias(input, weights, bias):
     return conv2d(input, weights) + bias
+
+conv2d_bias_jit = torch.compile(conv2d_bias)

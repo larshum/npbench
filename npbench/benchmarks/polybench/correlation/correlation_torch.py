@@ -13,3 +13,5 @@ def kernel(M, float_n, data):
         corr[i + 1:M, i] = corr[i, i + 1:M] = data[:, i] @ data[:, i + 1:M]
 
     return corr
+
+kernel_jit = torch.compile(kernel)

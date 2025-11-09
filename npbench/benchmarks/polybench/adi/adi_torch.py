@@ -52,3 +52,5 @@ def kernel(TSTEPS, N, u):
             u[1:N - 1, j] = p[1:N - 1, j] * u[1:N - 1, j + 1] + q[1:N - 1, j]
 
     return u
+
+kernel_jit = torch.compile(kernel)

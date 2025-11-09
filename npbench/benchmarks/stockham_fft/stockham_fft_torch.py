@@ -34,3 +34,5 @@ def stockham_fft(N, R, K, x, y):
         # Product with Butterfly
         y[:] = torch.reshape(dft_mat @ torch.reshape(tmp_twid, (R, R**(K - 1))),
                           (N, ))
+
+stockham_fft_jit = torch.compile(stockham_fft)

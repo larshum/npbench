@@ -50,3 +50,5 @@ def resnet_basicblock(input, conv1, conv2, conv3):
     x = conv2d(x, conv3)
     x = batchnorm2d(x)
     return relu(x + input)
+
+resnet_basicblock_jit = torch.compile(resnet_basicblock)
