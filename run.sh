@@ -36,7 +36,7 @@ function bench_cuda {
 }
 
 function bench_metal {
-  export FRAMEWORKS=("jax32" "torch_metal_jit" "torch_metal" "parpy_metal" "numpy32")
+  export FRAMEWORKS=("jax32" "torch_metal" "parpy_metal" "numpy32")
   # We skip the following tests because numpy32 fails to validate compared to
   # the default numpy version (using 64-bit floats):
   # - adi
