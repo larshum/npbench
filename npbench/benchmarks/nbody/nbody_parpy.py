@@ -44,7 +44,7 @@ def getAcc_kernel(pos, mass, G, softening, dx, dy, dz, inv_r3, a, N):
 @parpy.jit
 def getEnergy_kernel(pos, vel, mass, G, KE, PE, dx, dy, dz, inv_r, tmp, N):
     with parpy.gpu:
-        parpy.label('i')
+        parpy.label('reduce')
         KE[0] = parpy.reduce.sum(mass[:,0] * (vel[:,0]**2.0 + vel[:,1]**2.0 + vel[:,2]**2.0))
         KE[0] *= 0.5
 
@@ -72,10 +72,9 @@ def getEnergy_kernel(pos, vel, mass, G, KE, PE, dx, dy, dz, inv_r, tmp, N):
 
     with parpy.gpu:
         PE[0] = 0.0
-        for i in range(N):
-            parpy.label('reduce')
-            for j in range(i+1, N):
-                PE[0] += tmp[i,j]
+        parpy.label('reduce')
+        for ij in range(N*N):
+            PE[0] += tmp[ij//N,ij%N] if ij%N < ij//N else 0.0
         PE[0] *= G
 
 @parpy.jit
@@ -138,7 +137,7 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     p = {
         'N2': parpy.threads(N*N),
         'N': parpy.threads(N),
-        'reduce': parpy.threads(64).par_reduction()
+        'reduce': parpy.threads(512).par_reduction()
     }
     nbody_kernel(
         mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, a, inv_r, tmp,
