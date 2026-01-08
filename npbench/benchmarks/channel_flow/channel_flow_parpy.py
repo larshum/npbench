@@ -56,25 +56,26 @@ def pressure_poisson_periodic(nit, p, dx, dy, b, pn):
                          (2.0 * (dx**2.0 + dy**2.0)) - dx**2.0 * dy**2.0 /
                          (2.0 * (dx**2.0 + dy**2.0)) * b[1:-1, 1:-1])
 
-        # Periodic BC Pressure @ x = 2
-        parpy.label('ny')
-        p[1:-1, -1] = (((pn[1:-1, 0] + pn[1:-1, -2]) * dy**2.0 +
-                        (pn[2:, -1] + pn[0:-2, -1]) * dx**2.0) /
-                       (2.0 * (dx**2.0 + dy**2.0)) - dx**2.0 * dy**2.0 /
-                       (2.0 * (dx**2.0 + dy**2.0)) * b[1:-1, -1])
+        with parpy.gpu:
+            # Periodic BC Pressure @ x = 2
+            parpy.label('ny')
+            p[1:-1, -1] = (((pn[1:-1, 0] + pn[1:-1, -2]) * dy**2.0 +
+                            (pn[2:, -1] + pn[0:-2, -1]) * dx**2.0) /
+                           (2.0 * (dx**2.0 + dy**2.0)) - dx**2.0 * dy**2.0 /
+                           (2.0 * (dx**2.0 + dy**2.0)) * b[1:-1, -1])
 
-        # Periodic BC Pressure @ x = 0
-        parpy.label('ny')
-        p[1:-1,
-          0] = (((pn[1:-1, 1] + pn[1:-1, -1]) * dy**2.0 +
-                 (pn[2:, 0] + pn[0:-2, 0]) * dx**2.0) / (2.0 * (dx**2.0 + dy**2.0)) -
-                dx**2.0 * dy**2.0 / (2.0 * (dx**2.0 + dy**2.0)) * b[1:-1, 0])
+            # Periodic BC Pressure @ x = 0
+            parpy.label('ny')
+            p[1:-1,
+              0] = (((pn[1:-1, 1] + pn[1:-1, -1]) * dy**2.0 +
+                     (pn[2:, 0] + pn[0:-2, 0]) * dx**2.0) / (2.0 * (dx**2.0 + dy**2.0)) -
+                    dx**2.0 * dy**2.0 / (2.0 * (dx**2.0 + dy**2.0)) * b[1:-1, 0])
 
-        # Wall boundary conditions, pressure
-        parpy.label('nx')
-        p[-1, :] = p[-2, :]  # dp/dy = 0 at y = 2
-        parpy.label('nx')
-        p[0, :] = p[1, :]  # dp/dy = 0 at y = 0
+            # Wall boundary conditions, pressure
+            parpy.label('nx')
+            p[-1, :] = p[-2, :]  # dp/dy = 0 at y = 2
+            parpy.label('nx')
+            p[0, :] = p[1, :]  # dp/dy = 0 at y = 0
 
 
 @parpy.jit

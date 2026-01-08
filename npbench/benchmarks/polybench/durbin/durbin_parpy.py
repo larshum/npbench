@@ -26,8 +26,8 @@ def kernel(r):
     temp = parpy.buffer.empty_like(y)
     N, = r.shape
     p = {
-        'k_red': parpy.threads(512).par_reduction(),
-        'k': parpy.threads(512)
+        'k_red': parpy.threads(1024).par_reduction(),
+        'k': parpy.threads(1024)
     }
     parpy_kernel(r, y, temp, N, opts=parpy.par(p))
     return y

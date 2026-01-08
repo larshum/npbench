@@ -16,7 +16,7 @@ def parpy_kernel(A, R, Q, M, N):
 
         parpy.label('j')
         for j in range(k+1, N):
-            parpy.label('i')
+            parpy.label('i_inner')
             A[:,j] -= Q[:,k] * R[k,j]
 
 def kernel(A):
@@ -26,6 +26,7 @@ def kernel(A):
     M, N = A.shape
     p = {
         'i': parpy.threads(M),
+        'i_inner': parpy.threads(128),
         'i_reduce': parpy.threads(128).par_reduction(),
         'j': parpy.threads(N)
     }

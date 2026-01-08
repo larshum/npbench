@@ -12,6 +12,6 @@ def kernel(path):
     N, N = path.shape
     p = {
         'i': parpy.threads(N),
-        'j': parpy.threads(N)
+        'j': parpy.threads(256)
     }
     kernel_helper(path, N, opts=parpy.par(p))

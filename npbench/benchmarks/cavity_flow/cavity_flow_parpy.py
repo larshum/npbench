@@ -37,29 +37,31 @@ def pressure_poisson(nit, p, pn, dx, dy, b):
                          (2.0 * (dx**2.0 + dy**2.0)) - dx**2.0 * dy**2.0 /
                          (2.0 * (dx**2.0 + dy**2.0)) * b[1:-1, 1:-1])
 
-        parpy.label('ny')
-        p[:, -1] = p[:, -2]  # dp/dx = 0 at x = 2
-        parpy.label('nx')
-        p[0, :] = p[1, :]  # dp/dy = 0 at y = 0
-        parpy.label('ny')
-        p[:, 0] = p[:, 1]  # dp/dx = 0 at x = 0
-        parpy.label('nx')
-        p[-1, :] = 0.0  # p = 0 at y = 2
+        with parpy.gpu:
+            parpy.label('ny')
+            p[:, -1] = p[:, -2]  # dp/dx = 0 at x = 2
+            parpy.label('nx')
+            p[0, :] = p[1, :]  # dp/dy = 0 at y = 0
+            parpy.label('ny')
+            p[:, 0] = p[:, 1]  # dp/dx = 0 at x = 0
+            parpy.label('nx')
+            p[-1, :] = 0.0  # p = 0 at y = 2
 
 
 @parpy.jit
 def cavity_flow_kernel(nx, ny, nt, nit, u, un, v, vn, b, dt, dx, dy, p, pn, rho, nu):
     for i in range(nt):
         # Copy data from u -> un, v -> vn, and p -> pn
-        parpy.label('ny')
-        parpy.label('nx')
-        un[:,:] = u[:,:]
-        parpy.label('ny')
-        parpy.label('nx')
-        vn[:,:] = v[:,:]
-        parpy.label('ny')
-        parpy.label('nx')
-        pn[:,:] = p[:,:]
+        with parpy.gpu:
+            parpy.label('ny')
+            parpy.label('nx')
+            un[:,:] = u[:,:]
+            parpy.label('ny')
+            parpy.label('nx')
+            vn[:,:] = v[:,:]
+            parpy.label('ny')
+            parpy.label('nx')
+            pn[:,:] = p[:,:]
 
         parpy.builtin.inline(build_up_b(b, rho, dt, u, v, dx, dy))
         parpy.builtin.inline(pressure_poisson(nit, p, pn, dx, dy, b))
@@ -90,22 +92,23 @@ def cavity_flow_kernel(nx, ny, nt, nit, u, un, v, vn, b, dt, dx, dy, p, pn, rho,
                     dt / dy**2.0 *
                     (vn[2:, 1:-1] - 2.0 * vn[1:-1, 1:-1] + vn[0:-2, 1:-1])))
 
-        parpy.label('nx')
-        u[0, :] = 0.0
-        parpy.label('ny')
-        u[:, 0] = 0.0
-        parpy.label('ny')
-        u[:, -1] = 0.0
-        parpy.label('nx')
-        u[-1, :] = 1.0  # set velocity on cavity lid equal to 1
-        parpy.label('nx')
-        v[0, :] = 0.0
-        parpy.label('nx')
-        v[-1, :] = 0.0
-        parpy.label('ny')
-        v[:, 0] = 0.0
-        parpy.label('ny')
-        v[:, -1] = 0.0
+        with parpy.gpu:
+            parpy.label('nx')
+            u[0, :] = 0.0
+            parpy.label('ny')
+            u[:, 0] = 0.0
+            parpy.label('ny')
+            u[:, -1] = 0.0
+            parpy.label('nx')
+            u[-1, :] = 1.0  # set velocity on cavity lid equal to 1
+            parpy.label('nx')
+            v[0, :] = 0.0
+            parpy.label('nx')
+            v[-1, :] = 0.0
+            parpy.label('ny')
+            v[:, 0] = 0.0
+            parpy.label('ny')
+            v[:, -1] = 0.0
 
 def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
     un = parpy.buffer.empty_like(u)

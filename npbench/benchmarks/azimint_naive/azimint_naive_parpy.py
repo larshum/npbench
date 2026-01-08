@@ -23,21 +23,14 @@ def parpy_kernel(
         rmax,
         npt
 ):
-    parpy.label('ix')
     for i in range(N):
         rmax[0] = parpy.builtin.maximum(rmax[0], radius[i])
-    parpy.label('i')
+    parpy.label('npt')
     for i in range(npt):
         r1 = rmax[0] * convert(i, F64) / convert(npt, F64)
         r2 = rmax[0] * convert(i+1, F64) / convert(npt, F64)
-        c = 0.0
-        parpy.label('j')
-        for j in range(N):
-            c = c + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0)
-        s = 0.0
-        parpy.label('j')
-        for j in range(N):
-            s = s + (1.0 if r1 <= radius[j] and radius[j] < r2 else 0.0) * data[j]
+        c = parpy.reduce.sum(1.0 if r1 <= radius[0:N] and radius[0:N] < r2 else 0.0)
+        s = parpy.reduce.sum((1.0 if r1 <= radius[0:N] and radius[0:N] < r2 else 0.0) * data[0:N])
         res[i] = s / c
 
 def azimint_naive(data, radius, npt):
@@ -45,10 +38,10 @@ def azimint_naive(data, radius, npt):
     rmax = parpy.buffer.empty((1,), data.dtype, data.backend())
     res = parpy.buffer.zeros((npt,), data.dtype, data.backend())
     p = {
-        'i': parpy.threads(npt),
-        'ix': parpy.threads(1024).par_reduction(),
-        'j': parpy.threads(1024).par_reduction()
+        'npt': parpy.threads(npt),
+        'N': parpy.threads(1024).par_reduction(),
     }
     opts = parpy.par(p)
+    opts.max_unroll_count = 0
     parpy_kernel(data, radius, res, rmax, npt, opts=opts)
     return res
