@@ -25,4 +25,4 @@ def kernel(A):
 
     Q, R, A = jax.lax.fori_loop(0, A.shape[1], body_fun, (Q, R, A))
 
-    return Q, R
+    return Q, R, A

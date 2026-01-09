@@ -21,6 +21,6 @@
         },
         "input_args": ["L", "x", "b"],
         "array_args": ["L", "x", "b"],
-        "output_args": ["b"]
+        "output_args": ["x"]
     }
 }

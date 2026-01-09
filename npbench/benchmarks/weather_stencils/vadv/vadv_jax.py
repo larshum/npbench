@@ -100,4 +100,4 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     
     data_col, utens_stage = lax.fori_loop(0, K - 1, loop5, (data_col, utens_stage))
 
-    return ccol, dcol, data_col, utens_stage
+    return utens_stage
