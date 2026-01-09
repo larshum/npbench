@@ -16,7 +16,7 @@ def compute(array_1, array_2, a, b, c):
     a = np.array(a)
     b = np.array(b)
     c = np.array(c)
-    out = parpy.buffer.zeros_like(array_1)
+    out = parpy.buffer.empty_like(array_1)
     N, M = array_1.shape
     p = {
         'i': parpy.threads(N),
