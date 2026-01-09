@@ -1,9 +1,9 @@
 import parpy
 
 T = parpy.types.type_var()
-I = parpy.types.symbol()
-J = parpy.types.symbol()
-K = parpy.types.symbol()
+I = parpy.types.shape_var()
+J = parpy.types.shape_var()
+K = parpy.types.shape_var()
 
 @parpy.jit
 def hdiff_kernel(

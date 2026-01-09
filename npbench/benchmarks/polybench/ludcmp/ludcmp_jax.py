@@ -46,4 +46,4 @@ def kernel(A, b):
     A, y, b = lax.fori_loop(0, A.shape[0], loop_body_2, (A, y, b))
     A, x, y = lax.fori_loop(0, A.shape[0], loop_body_3, (A, x, y))
 
-    return x, y
+    return x, y, A

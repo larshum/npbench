@@ -167,6 +167,6 @@ def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
 
         return (udiff, stepcount, u, v, p)
     
-    _, stepcount, _, _, _ = lax.while_loop(conf_func, body_func, array_vals)
+    _, stepcount, u, v, p = lax.while_loop(conf_func, body_func, array_vals)
     
-    return stepcount
+    return stepcount, u, v, p

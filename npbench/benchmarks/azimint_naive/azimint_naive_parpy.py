@@ -13,7 +13,7 @@ from parpy.builtin import convert
 from parpy.types import F64
 
 T = parpy.types.type_var()
-N = parpy.types.symbol()
+N = parpy.types.shape_var()
 
 @parpy.jit
 def parpy_kernel(
