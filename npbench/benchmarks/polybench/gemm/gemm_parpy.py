@@ -2,10 +2,9 @@ import parpy
 from parpy.types import F64, I64
 import pathlib
 
-
-M = parpy.types.symbol()
-N = parpy.types.symbol()
-K = parpy.types.symbol()
+M = parpy.types.shape_var()
+N = parpy.types.shape_var()
+K = parpy.types.shape_var()
 
 @parpy.external("cublas_gemm_f64", parpy.CompileBackend.Cuda, parpy.Target.Host, header="<cublas_helper.h>")
 def cublas_gemm_f64(
