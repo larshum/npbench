@@ -19,7 +19,7 @@ function run_benchmarks {
         VALIDATION_STR="-x $VALIDATOR"
       fi
       for b in ${BENCHMARKS[@]}; do
-        timeout 40m python run_benchmark.py -f $f -b $b -p $PRESET ${BASELINE_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
+        timeout 40m python run_benchmark.py -f $f -b $b -p $PRESET ${VALIDATION_STR} >> ${OUT}/$f.out 2>> ${OUT}/$f.err
       done
     done
   fi
