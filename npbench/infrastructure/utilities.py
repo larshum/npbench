@@ -187,7 +187,7 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
                     # (t) before converting it back to a complex view.
                     t = t.flatten()
                     r = r.flatten()
-                    if r.dtype == np.float32:
+                    if t.dtype == np.float32:
                         v = t.view(np.complex64)
                     else:
                         v = t.view(np.complex128)
