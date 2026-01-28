@@ -13,4 +13,6 @@ def parpy_kernel(L, x, b, N):
 def kernel(L, x, b):
     N = x.shape[0]
     p = {'reduce': parpy.threads(256).par_reduction()}
-    parpy_kernel(L, x, b, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(L, x, b, N, opts=opts)

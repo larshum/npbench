@@ -45,7 +45,9 @@ def hdiff(in_field, out_field, coeff):
     flx_field = parpy.buffer.empty((I+1,J,K), in_field.dtype, in_field.backend())
     fly_field = parpy.buffer.empty((I,J+1,K), in_field.dtype, in_field.backend())
     p = {'I': parpy.threads(I), 'J': parpy.threads(J), 'K': parpy.threads(K)}
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
     hdiff_kernel(
         in_field, out_field, coeff, lap_field, res1, res2, flx_field, fly_field,
-        opts=parpy.par(p)
+        opts=opts
     )

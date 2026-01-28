@@ -44,6 +44,7 @@ def arc_distance(theta_1, phi_1, theta_2, phi_2):
     """
     N, = theta_1.shape
     distance_matrix = parpy.buffer.empty_like(theta_1)
-    p = {'i': parpy.threads(N)}
-    kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N, opts=parpy.par(p))
+    opts = parpy.par({'i': parpy.threads(N)})
+    opts.max_unroll_count = 0
+    kernel(theta_1, phi_1, theta_2, phi_2, distance_matrix, N, opts=opts)
     return distance_matrix

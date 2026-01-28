@@ -24,5 +24,7 @@ def kernel(TMAX, ex, ey, hz, _fict_):
         'i': parpy.threads(NX-1),
         'j': parpy.threads(1024),
     }
-    kernel_wrap(ex, ey, hz, _fict_, TMAX, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    kernel_wrap(ex, ey, hz, _fict_, TMAX, opts=opts)
 

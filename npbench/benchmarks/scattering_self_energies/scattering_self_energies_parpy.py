@@ -67,7 +67,9 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
     }
     dHG = parpy.buffer.zeros((Nkz, NE, NA, Norb, Norb, 2), G.dtype, G.backend())
     dHD = parpy.buffer.zeros_like(dHG)
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
     scattering_self_energies_kernel(
         neigh_idx, dH, G, D, Sigma, dHG, dHD,
-        Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, opts=parpy.par(p)
+        Nkz, NE, Nqz, Nw, N3D, NA, NB, Norb, opts=opts
     )

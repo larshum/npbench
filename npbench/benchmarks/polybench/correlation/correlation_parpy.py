@@ -23,5 +23,7 @@ def kernel(M, float_n, data):
         'i': parpy.threads(M-1),
         'j': parpy.threads(256),
     }
-    parpy_kernel(corr, data, M, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(corr, data, M, opts=opts)
     return corr

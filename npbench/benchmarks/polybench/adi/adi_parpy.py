@@ -61,5 +61,7 @@ def kernel(TSTEPS, N, u):
     b = e = torch.tensor(1.0 + mul2, dtype=dtype)
     d = f = torch.tensor(-mul2 / 2.0, dtype=dtype)
     par = { 'i': parpy.threads(N-2) }
-    parpy_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N, opts=parpy.par(par))
+    opts = parpy.par(par)
+    opts.max_unroll_count = 0
+    parpy_kernel(u, v, p, q, a, b, c, d, e, f, TSTEPS, N, opts=opts)
     return u

@@ -21,5 +21,7 @@ def parpy_kernel(table, seq, N):
 
 def kernel(N, seq):
     table = parpy.buffer.zeros((N, N), parpy.types.I32, seq.backend())
-    parpy_kernel(table, seq, N, opts=parpy.par({}))
+    opts = parpy.par({})
+    opts.max_unroll_count = 0
+    parpy_kernel(table, seq, N, opts=opts)
     return table

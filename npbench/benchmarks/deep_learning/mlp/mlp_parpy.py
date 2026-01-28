@@ -31,7 +31,9 @@ def softmax(x, backend):
         'i': parpy.threads(N),
         'j': parpy.threads(1024),
     }
-    softmax_kernel(x, out, N, M, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    softmax_kernel(x, out, N, M, opts=opts)
     return out
 
 # 3-layer MLP

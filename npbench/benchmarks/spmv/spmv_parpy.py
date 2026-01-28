@@ -20,5 +20,7 @@ def spmv(A_row, A_col, A_val, x):
         'i': parpy.threads(N-1),
         'j': parpy.threads(64).par_reduction(),
     }
-    spmv_helper(A_row, A_col, A_val, N, x, y, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    spmv_helper(A_row, A_col, A_val, N, x, y, opts=opts)
     return y

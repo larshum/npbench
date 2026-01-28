@@ -36,6 +36,7 @@ def kernel(alpha, beta, C, A, B):
         opts = parpy.par({})
         opts.includes += [str(pathlib.Path(__file__).parent.resolve())]
         opts.extra_flags += ["-lcublas"]
+        opts.max_unroll_count = 0
         inplace_gemm_wrap(alpha, beta, C, A, B, opts=opts)
     else:
         raise RuntimeError(f"GEMM is only implemented for CUDA")

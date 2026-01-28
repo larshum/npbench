@@ -116,9 +116,11 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     datacol = parpy.buffer.empty_like(gav)
 
     p = {'I': parpy.threads(I), 'J': parpy.threads(J)}
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
     vadv_parpy(
         utens_stage, u_stage, wcon, u_pos, utens, dtr_stage, ccol, dcol,
         data_col, I, J, K, BET_M, BET_P, gav, gcv, as_, cs, acol, bcol,
         correction_term, divided, datacol,
-        opts=parpy.par(p)
+        opts=opts
     )

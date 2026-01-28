@@ -16,4 +16,6 @@ def kernel(alpha, A, B):
         'j': parpy.threads(N),
         'k': parpy.threads(256).par_reduction()
     }
-    trmm(alpha, A, B, M, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    trmm(alpha, A, B, M, N, opts=opts)

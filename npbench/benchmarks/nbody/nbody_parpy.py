@@ -118,7 +118,9 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     # Convert to Center-of-Mass frame
     t1 = parpy.buffer.zeros((3,), vel.dtype, vel.backend())
     t2 = parpy.buffer.zeros((3,), vel.dtype, vel.backend())
-    nbody_center_of_mass_kernel(mass, vel, t1, t2, N, opts=parpy.par({'N': parpy.threads(N)}))
+    opts = parpy.par({'N': parpy.threads(N)})
+    opts.max_unroll_count = 0
+    nbody_center_of_mass_kernel(mass, vel, t1, t2, N, opts=opts)
 
     # Allocate temporary data used within the megakernel
     N,_ = pos.shape
@@ -139,8 +141,10 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
         'N': parpy.threads(N),
         'reduce': parpy.threads(512).par_reduction()
     }
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
     nbody_kernel(
         mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, a, inv_r, tmp,
-        opts=parpy.par(p)
+        opts=opts
     )
     return KE.reshape(Nt+1), PE.reshape(Nt+1)

@@ -28,4 +28,6 @@ def kernel(alpha, beta, C, A, B):
         'N': parpy.threads(N),
         'i_red': parpy.threads(32).par_reduction()
     }
-    parpy_kernel(alpha, beta, C, A, B, M, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(alpha, beta, C, A, B, M, N, opts=opts)

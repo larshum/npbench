@@ -118,6 +118,7 @@ def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
 
     par = {'ny': parpy.threads(ny), 'nx': parpy.threads(nx)}
     opts = parpy.par(par)
+    opts.max_unroll_count = 0
     cavity_flow_kernel(
         nx, ny, nt, nit, u, un, v, vn, b, dt, dx, dy, p, pn, rho, nu,
         opts=opts

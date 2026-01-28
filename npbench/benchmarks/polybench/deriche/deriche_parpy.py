@@ -69,5 +69,7 @@ def kernel(alpha, imgIn):
         'i': parpy.threads(W),
         'j': parpy.threads(H)
     }
-    parpy_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(a, b, c, imgIn, imgOut, y1, y2, W, H, opts=opts)
     return imgOut

@@ -12,4 +12,6 @@ def kernel_wrap(A, B, TSTEPS):
 def kernel(TSTEPS, A, B):
     N, = A.shape
     p = {'i': parpy.threads(N-2)}
-    kernel_wrap(A, B, TSTEPS, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    kernel_wrap(A, B, TSTEPS, opts=opts)

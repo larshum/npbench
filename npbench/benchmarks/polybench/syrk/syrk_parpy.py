@@ -19,5 +19,6 @@ def kernel(alpha, beta, C, A):
         'i': parpy.threads(N),
         'k': parpy.threads(256).par_reduction()
     }
-    syrk(alpha, beta, C, A, N, M, opts=parpy.par(p))
-
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    syrk(alpha, beta, C, A, N, M, opts=opts)

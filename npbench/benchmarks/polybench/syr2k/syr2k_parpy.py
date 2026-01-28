@@ -16,5 +16,7 @@ def kernel(alpha, beta, C, A, B):
         'i': parpy.threads(N),
         'k': parpy.threads(256).par_reduction()
     }
-    kernel_wrap(alpha, beta, C, A, B, N, M, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    kernel_wrap(alpha, beta, C, A, B, N, M, opts=opts)
 

@@ -10,7 +10,9 @@ def relu_kernel(x):
 def relu(x):
     N = math.prod(x.shape)
     x_flat = x.reshape(N)
-    relu_kernel(x_flat, opts=parpy.par({'N': parpy.threads(N)}))
+    opts = parpy.par({'N': parpy.threads(N)})
+    opts.max_unroll_count = 0
+    relu_kernel(x_flat, opts=opts)
     return x
 
 @parpy.jit
@@ -38,7 +40,9 @@ def conv2d(input, weights):
     C_out = weights.shape[3]
     output = parpy.buffer.empty((N, H_out, W_out, C_out), parpy.types.F32, weights.backend())
     p = {'i': parpy.threads(H_out), 'j': parpy.threads(W_out), 'k': parpy.threads(C_out)}
-    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=opts)
     return output
 
 @parpy.jit
@@ -86,7 +90,9 @@ def batchnorm2d(x, eps=1e-5):
         'k': parpy.threads(reduced_shape[2]),
         'l': parpy.threads(reduced_shape[3]),
     }
-    batchnorm2d_kernel(x, mean, std, eps, out, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    batchnorm2d_kernel(x, mean, std, eps, out, N, opts=opts)
     return out
 
 @parpy.jit
@@ -105,7 +111,9 @@ def flip(tmp, padded):
         'k': parpy.threads(K),
         'l': parpy.threads(L),
     }
-    flip_kernel(tmp, padded, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    flip_kernel(tmp, padded, opts=opts)
 
 @parpy.jit
 def add_elemwise_kernel(x, y, out):
@@ -118,7 +126,9 @@ def add_elemwise(x, input):
     input_flat = input.reshape(N)
     out = parpy.buffer.empty_like(input)
     out_flat = out.reshape(N)
-    add_elemwise_kernel(x_flat, input_flat, out_flat, opts=parpy.par({'N': parpy.threads(N)}))
+    opts = parpy.par({'N': parpy.threads(N)})
+    opts.max_unroll_count = 0
+    add_elemwise_kernel(x_flat, input_flat, out_flat, opts=opts)
     return out
 
 # Bottleneck residual block (after initial convolution, without downsampling)

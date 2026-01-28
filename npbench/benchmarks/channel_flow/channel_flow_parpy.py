@@ -197,9 +197,11 @@ def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
             'nx': parpy.threads(nx),
             'reduce': parpy.threads(1024),
         }
+        opts = parpy.par(par)
+        opts.max_unroll_count = 0
         channel_flow_kernel(
             nit, u, v, dt, dx, dy, p, rho, nu, F, un, vn, pn, b, udiff_tmp,
-            opts=parpy.par(par)
+            opts=opts
         )
         udiff = udiff_tmp.numpy()[0]
         stepcount += 1

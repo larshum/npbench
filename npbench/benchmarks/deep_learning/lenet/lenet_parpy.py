@@ -11,7 +11,9 @@ def relu_kernel(x):
 def relu(x):
     N = math.prod(x.shape)
     x_flat = x.reshape(N)
-    relu_kernel(x_flat, opts=parpy.par({'N': parpy.threads(N)}))
+    opts = parpy.par({'N': parpy.threads(N)})
+    opts.max_unroll_count = 0
+    relu_kernel(x_flat, opts=opts)
     return x
 
 @parpy.jit
@@ -52,14 +54,18 @@ def conv2d_bias(input, weights, bias):
         'W_out': parpy.threads(W_out),
         'C_out': parpy.threads(C_out)
     }
-    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=opts)
     p = {
         'i': parpy.threads(C_out),
         'j': parpy.threads(N),
         'k': parpy.threads(H_out),
         'l': parpy.threads(W_out)
     }
-    add_elemwise(output, bias, C_out, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    add_elemwise(output, bias, C_out, opts=opts)
     return output
 
 
@@ -85,7 +91,9 @@ def maxpool2d(x):
     )
     N_0, N_1, N_2, N_3 = output.shape
     p = {'i': parpy.threads(N_1), 'j': parpy.threads(N_2)}
-    maxpool2d_kernel(x, output, N_0, N_1, N_2, N_3, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    maxpool2d_kernel(x, output, N_0, N_1, N_2, N_3, opts=opts)
     return output
 
 

@@ -22,5 +22,7 @@ def go_fast(a):
         'ix': parpy.threads(N),
         'j': parpy.threads(N)
     }
-    parpy_kernel(a, tmp, out, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(a, tmp, out, N, opts=opts)
     return out

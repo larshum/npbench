@@ -21,5 +21,7 @@ def kernel(M, float_n, data):
         'i': parpy.threads(M),
         'j': parpy.threads(256),
     }
-    covariance_parpy(cov, t_data, float_n, M, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    covariance_parpy(cov, t_data, float_n, M, opts=opts)
     return cov

@@ -23,5 +23,7 @@ def crc16(data, poly=0x8408):
     data = data.with_type(parpy.types.I32)
     N, = data.shape
     out = parpy.buffer.empty((1,), data.dtype, data.backend())
-    crc16_kernel(data, poly, N, out, opts=parpy.par({}))
+    opts = parpy.par({})
+    opts.max_unroll_count = 0
+    crc16_kernel(data, poly, N, out, opts=opts)
     return int(out.numpy()[0])

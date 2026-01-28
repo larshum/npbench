@@ -29,5 +29,7 @@ def kernel(r):
         'k_red': parpy.threads(1024).par_reduction(),
         'k': parpy.threads(1024)
     }
-    parpy_kernel(r, y, temp, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(r, y, temp, N, opts=opts)
     return y

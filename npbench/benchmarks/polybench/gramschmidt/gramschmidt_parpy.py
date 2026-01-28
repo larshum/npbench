@@ -30,5 +30,7 @@ def kernel(A):
         'i_reduce': parpy.threads(128).par_reduction(),
         'j': parpy.threads(N)
     }
-    parpy_kernel(A, R, Q, M, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(A, R, Q, M, N, opts=opts)
     return Q, R

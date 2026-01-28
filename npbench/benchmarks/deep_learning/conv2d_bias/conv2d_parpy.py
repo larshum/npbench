@@ -41,4 +41,6 @@ def conv2d_bias(input, weights, bias):
     }
     conv2d_kernel(input, weights, output, H_out, W_out, N, C_in, C_out, K, opts=parpy.par(p))
     p = {'i': parpy.threads(C_out), 'j': parpy.threads(N), 'k': parpy.threads(H_out), 'l': parpy.threads(W_out)}
-    add_elemwise(output, bias, C_out, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    add_elemwise(output, bias, C_out, opts=opts)

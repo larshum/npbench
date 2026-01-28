@@ -14,4 +14,6 @@ def kernel(path):
         'i': parpy.threads(N),
         'j': parpy.threads(256)
     }
-    kernel_helper(path, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    kernel_helper(path, N, opts=opts)

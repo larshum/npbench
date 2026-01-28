@@ -31,5 +31,7 @@ def softmax(x):
         'k': parpy.threads(SM),
         'l': parpy.threads(64),
     }
-    softmax_wrap(x, out, N, H, SM, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    softmax_wrap(x, out, N, H, SM, opts=opts)
     return out

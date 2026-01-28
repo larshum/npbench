@@ -31,4 +31,6 @@ def kernel(TSTEPS, A, B):
         'j': parpy.threads(64),
         'k': parpy.threads(64)
     }
-    parpy_kernel(A, B, TSTEPS, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    parpy_kernel(A, B, TSTEPS, opts=opts)

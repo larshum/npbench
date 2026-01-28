@@ -22,5 +22,7 @@ def compute(array_1, array_2, a, b, c):
         'i': parpy.threads(N),
         'j': parpy.threads(1024)
     }
-    compute_helper(array_1, array_2, N, M, a, b, c, out, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    compute_helper(array_1, array_2, N, M, a, b, c, out, opts=opts)
     return out

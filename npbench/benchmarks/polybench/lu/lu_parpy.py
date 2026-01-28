@@ -21,4 +21,6 @@ def lu_parpy(A, N):
 def kernel(A):
     N, N = A.shape
     p = {'k': parpy.threads(128).par_reduction()}
-    lu_parpy(A, N, opts=parpy.par(p))
+    opts = parpy.par(p)
+    opts.max_unroll_count = 0
+    lu_parpy(A, N, opts=opts)

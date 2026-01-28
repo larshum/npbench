@@ -13,4 +13,6 @@ def parpy_kernel(TSTEPS, N, A):
                     A[i, j] /= 9.0
 
 def kernel(TSTEPS, N, A):
-    parpy_kernel(TSTEPS, N, A, opts=parpy.par({}))
+    opts = parpy.par({})
+    opts.max_unroll_count = 0
+    parpy_kernel(TSTEPS, N, A, opts=opts)
