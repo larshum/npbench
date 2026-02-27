@@ -12,8 +12,10 @@ class ParPyFramework(Framework):
         """ Reads framework information.
         :param fname: The framework name.
         """
-
         super().__init__(fname)
+        import parpy
+        backend = eval(self.get_target_backend())
+        parpy.backend.set_default(backend)
 
     def version(self) -> str:
         """ Return the framework version. """
@@ -29,6 +31,8 @@ class ParPyFramework(Framework):
             return "parpy.CompileBackend.Cuda"
         elif self.fname == "parpy_metal":
             return "parpy.CompileBackend.Metal"
+        elif self.fname == "parpy_triton":
+            return "parpy.CompileBackend.Triton"
 
     def get_sync_str(self):
         return f"parpy.sync({self.get_target_backend()})"
@@ -44,6 +48,8 @@ class ParPyFramework(Framework):
             backend = parpy.CompileBackend.Cuda
         elif self.fname == "parpy_metal":
             backend = parpy.CompileBackend.Metal
+        elif self.fname == "parpy_triton":
+            backend = parpy.CompileBackend.Triton
 
         def reshape_complex(t, float_ty):
             sh = list(t.shape) + [2]
