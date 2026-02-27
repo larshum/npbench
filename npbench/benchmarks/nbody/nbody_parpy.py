@@ -105,10 +105,11 @@ def nbody_kernel(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, ac
 
 @parpy.jit
 def nbody_center_of_mass_kernel(mass, vel, t1, t2, N):
-    parpy.label('N')
-    for i in range(N):
-        t1[:] += mass[i,:] * vel[i,:]
-        t2[:] += mass[i,:]
+    for dim in range(3):
+        parpy.label('N')
+        t2[dim] = parpy.reduce.sum(mass[:,dim])
+        parpy.label('N')
+        t1[dim] = parpy.reduce.sum(mass[:,dim] * vel[:,dim])
 
     parpy.label('N')
     for i in range(N):
