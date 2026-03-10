@@ -144,6 +144,8 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     }
     opts = parpy.par(p)
     opts.max_unroll_count = 0
+    if mass.backend() == parpy.CompileBackend.Triton:
+        opts.force_float_size = parpy.types.F64
     nbody_kernel(
         mass, pos, vel, N, Nt, dt, G, softening, KE, PE, dx, dy, dz, a, inv_r, tmp,
         opts=opts

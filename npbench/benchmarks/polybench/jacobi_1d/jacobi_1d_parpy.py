@@ -14,4 +14,6 @@ def kernel(TSTEPS, A, B):
     p = {'i': parpy.threads(N-2)}
     opts = parpy.par(p)
     opts.max_unroll_count = 0
+    if A.backend() == parpy.CompileBackend.Triton:
+        opts.force_float_size = parpy.types.F64
     kernel_wrap(A, B, TSTEPS, opts=opts)
